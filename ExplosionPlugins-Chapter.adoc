@@ -1,0 +1,289 @@
+[[Explosions]]
+== Explosions and Rocket Launchers
+
+This chapter, like the previous one, is targeted at readers who have read through the previous ones and know how to make plugins. It will expand on your knowledge of the Bukkit API and show you more about what it can do.
+
+These two plugins are more complicated than the previous ones, and so will require you to pay closer attention to details.
+
+=== TNT Magnet
+
+This next plugin is very explosive! 
+
+Whenever a TNT block is placed, it turns into a TNT magnet. After 5 seconds, it will detonate, and all mobs around it will be teleported to it just before. In this way, you can destroy all mobs in an 8 block radius around the TNT.
+
+First some Java concepts.
+
+Java allows a class to be _derived_ from another class. A class that is derived from another class is called a _subclass_ (also a _derived class_, _extended class_, or _child class_). The class from which the subclass is derived is called a _superclass_ (also a _base class_ or _parent class_). A child class inherits a parent class using `extends` Java keyword. So a child class is also known to _extend_ the parent class.
+
+A class can be derived from a class that is derived from another class, and so on, and ultimately derived from the top most `java.lang.Object` class. All the classes, up to `java.lang.Object` are said to be in the _parent hierachy_ of the child class.
+
+This concept is commonly known as _inheritance_. A subclass _inherits_ fields and methods of the classes in parent hierarchy. So the fields from all the parent classes can be directly manipulated in the child class. Similarly, methods from all the parent classes can be invoked in the child class.
+
+Lets create our plugin now. First of all, like every other plugin, use the Bukkit Recipe to create a new plugin. Choose the plugin name as `TNTMagnet` and the package name as `org.devoxx4kids.bukkit.plugins.tntmagnet`.
+
+In order to display a countdown timer in the chat console that shows ``TNT will explode in 5 seconds'', ``TNT will explode in 4 seconds'' and so on, we'll use `BukkitRunnable` Bukkit class. This class allows us to defer execution of code to a later time, blow up TNT after 5 seconds in our case. This is called as __defining work__ in Bukkit. This can be easily achieved by making any class extend from `BukkitRunnable` Bukkit class. This code, or ``work'', may be scheduled to be executed repeatedly at a fixed interval, show a message every 1 second in our case. This is called as __scheduling work__ in Bukkit. This can be achieved by using any of the `run` methods in `BukkitRunnable`.
+
+This plugin needs to register a Listener in `onEnable()` method of `MyPlugin.java` and can be found in <<ExplosionPlugin_Registering_Listener>>. You know how to add code to `onEnable()` method. If you've forgotten then refresh your memory by referring to similar section from previous chapters.
+
+[[ExplosionPlugin_Registering_Listener]]
+.Register the SpongeWater Listener
+====
+[source, java]
+----
+getServer()
+    .getPluginManager()
+    .registerEvents(new TNTListener(this), 
+        this);
+----
+====
+
+`TNTListener` can be created by clicking on the stop sign in NetBeans and picking the right option. The Listener itself, `TNTListener.java` is pretty straight forward and the complete class is shown in <<TNTMagnet_class>>.
+
+[[TNTMagnet_class]]
+.TNTListener class
+====
+class TNTListener implements Listener {
+
+    private final MyPlugin plugin;
+
+    public TNTListener(MyPlugin plugin) {
+        this.plugin = plugin;
+    }
+
+    <emphasis role="strong">@EventHandler
+    public void explodeTNT(BlockPlaceEvent event) throws InterruptedException { <co id="tntmag-co-1" linkends="tntmag-co-11" />
+        if (event.getBlock().getType() != Material.TNT) { <co id="tntmag-co-2" linkends="tntmag-co-22" />
+            return;
+        }
+
+        p.sendMessage(ChatColor.GOLD + "You have placed a " + <co id="tntmag-co-3" linkends="tntmag-co-33" />
+            ChatColor.RED + "TNT Magnet" + ChatColor.GOLD + "! It will detonate in " +
+            ChatColor.DARK_PURPLE + "5 " + ChatColor.GOLD + "seconds.");
+
+        new TNTTask(this.plugin, 4, event.getPlayer(), event.getBlock()) <co id="tntmag-co-4" linkends="tntmag-co-44" />
+            .runTaskTimer(this.plugin, 20, 20); <co id="tntmag-co-5" linkends="tntmag-co-55" />
+    }</emphasis>
+}
+<simpara>Event handler is highligted in bold.</simpara>
+<calloutlist>
+<callout arearefs="tntmag-co-1" id="tntmag-co-11">
+<para>
+The method is run when a block is placed by a player in the game. The game generates an event and this is captured as
+<literal>BlockPlaceEvent</literal> Bukkit class.
+</para>
+</callout>
+<callout arearefs="tntmag-co-2" id="tntmag-co-22">
+<para>
+If the block is not TNT, the method returns. Optionally, you may display a message here.
+</para>
+</callout>
+<callout arearefs="tntmag-co-3" id="tntmag-co-33">
+<para>
+First message is displayed using a mix of purple and gold colors.
+</para>
+</callout>
+<callout arearefs="tntmag-co-4" id="tntmag-co-44">
+<para>
+<literal>TNTTask</literal> is a new class that defines the &#8220;work&#8221;, showing a message with countdown timer and
+blowing up TNT in our case. The first parameter indicates how many times the task needs to be executed. Second parameter is
+the player and third parameter is the block where TNT is placed. This class will be explained more in <xref linkend="TNTMagnet_Runnable"/>.
+</para>
+</callout>
+<callout arearefs="tntmag-co-5" id="tntmag-co-55">
+<para>
+The <literal>runTaskTimer()</literal> method from <literal>BukkitRunnable</literal> class schedules a task repeatedly until
+cancelled. It takes three parameters. The first parameter is the plugin that is scheduling the task. The second parameter is the
+ticks to wait before running the task. 20 ticks is 1 second and so wait 1 second before the first execution of the task. The third
+parameter is the ticks to wait between runs, and this is also 1 second between each subsequent run of the task.
+</para>
+</callout>
+</calloutlist>
+++++
+====
+
+One last file will have to be created for this plugin. Like other files, this can be easily created by clicking on the stop sign and selecting the option `Create class "TNTTask" with constructor "TNTTask(org.devoxx4kids.bukkit.plugins.tntmagnet.MyPlugin, int, org.bukkit.entity.Player, org.bukkit.block.Block)" in package org.devoxx4kids.bukkit.plugins.tntmagnet`. 
+
+NetBeans will create this file and open it in the main window. The updated file, with newly added code highlighted in bold, is shown in <<TNTMagnet_Runnable>>.
+
+[[TNTMagnet_Runnable]]
+.TNTMagnet Runnable class
+====
+[source, java]
+----
+public class TNTTask extends BukkitRunnable { <1>
+
+    <emphasis role="strong>private int counter; <2>
+    Player player;
+    Block block;</emphasis>
+
+    public TNTTask(int counter, Player p, Block b) { <3>
+        this.player = p;
+        this.block = b;
+        this.counter = counter;
+    }
+
+    <emphasis role="strong>@Override
+    public void run() { <4>
+        if (counter > 0) { <5>
+            player.sendMessage(ChatColor.GOLD + "Detonating in "
+            + ChatColor.DARK_PURPLE + counter-- + ChatColor.GOLD 
+            + " seconds!");
+
+            return;
+        }
+        player.sendMessage(ChatColor.GOLD + "Your " <6>
+            + ChatColor.RED + "TNT Magnet " 
+            + ChatColor.GOLD + "has detonated!");
+
+        Entity bat = block.getWorld().spawnEntity(new Location( <7>
+            block.getWorld(), 
+            block.getX() + 0.5, 
+            block.getY() + 0.5,
+            block.getZ() + 0.5), 
+            EntityType.BAT);
+
+        List<Entity> entitylist = ((LivingEntity) bat)
+            .getNearbyEntities(4.0, 4.0, 4.0);
+
+        bat.remove();
+
+        for (int i = 0; i < entitylist.toArray().length; i++) { <8>
+            entitylist.get(i).teleport(
+                new Location(block.getWorld(),
+                    block.getX() + 0.5,
+                    block.getY() + 0.5, 
+                    block.getZ() + 0.5));
+        }
+
+        block.setType(Material.AIR);
+
+        TNTPrimed tnt = (TNTPrimed) block.getWorld().spawnEntity(
+            new Location(block.getWorld(), 
+                block.getX() + 0.5,
+                block.getY() + 0.5, 
+                block.getZ()), 
+                EntityType.PRIMED_TNT);
+
+        tnt.setFuseTicks(0);
+
+        this.cancel(); <9>
+    }</emphasis>
+}
+
+----
+====
+
+<1> This class extends from `BukkitRunnable`. In this case, `TNTTask` is the child class and `BukkitRunnable` is the parent class.
+<2> Three variables are created. The first one will be used to determine how many seconds are left until the TNT explodes. The other two will store the player who placed the TNT and the TNT itself.
+<3> The player, block, and counter variables are set to the ones given in the constructor. This will allow us to access these values in other methods of the class.
+<4> The method `run()` in any `BukkitRunnable` class is executed when the class is instantiated in the Listener. Note the return type of this method is `void`. This is a Java keyword indicating that the method does not return any value. However the method can still return after any statement by placing an ``empty'' `return` statement. We'll look at this usage in this method next.
+<5> If the counter is greater than 0, the player is sent a message telling them how much time is remaining before their TNT Magnet explodes. The method also returns using `return` statement.
+<6> If the method has not returned, the counter is equal to 0, and it is time for the TNT Magnet to explode. The player is sent a message telling them that their TNT Magnet has detonated.
+<7> A bat is spawned at the location of the TNT, and its nearby entities are stored in a list. A bat is a good mob to spawn because it is so small you cannot see it outside the TNT. The bat is then removed.
+<8> All the entities in the list are teleported to the TNT. This is done using a ``for'' loop that runs through the entire list. The TNT is then removed by setting it to AIR, and primed TNT is spawned there with no fuse, so it blows up automatically.
+<9> The task has executed the exepcted number of times until this time and so `this.cancel()` cancels the task so that it does not keep repeating forever.
+
+To use this plugin, find a mob that you would like to blow up and place a TNT block next to it. After 5 seconds, if the mob hasn't moven out of range, it will be dead from the force of the explosion, especially if you have the BiggerTNTExplosions plugin installed.
+
+More details about Bukkit Schedulers can be found at http://wiki.bukkit.org/Scheduler_Programming.
+
+=== Rocket Launcher
+
+This is yet another fun plugin that will add a ``rocket launcher'' which throws explosive fireballs with 2.5 times the power of TNT. The rocket launcher will be a Diamond Horse Armor item by default, but you can change it to whatever you want. The plugin will also add a ``safety'' feature that lets you turn the rocket launcher on or off, so it doesn't shoot fireballs when you don't want it to.
+
+First of all, like every other plugin, use the Bukkit Recipe to create a new plugin.
+
+This plugin doesn't need anything in `MyPlugin.java` except for a line that registers a Listener. This line can be found in <<ExplosionPlugin_Registering_Listener>>. Change the `TNTListener` to `RocketLauncher` and create the new class by clicking on the stop sign.
+
+In the Listener, the code from <<RocketLauncher_Listener_Methods>> will have to be added. This code does all the work of firing fireballs and turning safety on/off.
+
+[[RocketLauncher_Listener_Methods]]
+.RocketLauncher Listener methods
+====
+[source, java]
+----
+Map<String, Boolean> safety = new HashMap(); <1>
+
+@EventHandler
+public void checkForNewPlayer(PlayerJoinEvent e){ <2>
+    if (!(safety.containsKey(e.getPlayer().getName()))) {
+        safety.put(e.getPlayer().getName(), true);
+    }
+}
+
+@EventHandler
+public void fireGun(PlayerInteractEvent e) { <3>
+    Player p = e.getPlayer();
+    
+    if(e.getAction() == Action.LEFT_CLICK_AIR || 
+        e.getAction() == Action.LEFT_CLICK_BLOCK){ <3>
+        
+        if(e.getPlayer().getItemInHand().getType() 
+            != Material.DIAMOND_BARDING){
+            return;
+        }
+        
+        if(safety.get(p.getName())){
+            safety.put(p.getName(), false);
+            p.sendMessage(ChatColor.AQUA + "Safety is now OFF.");
+        } else {
+            safety.put(p.getName(), true);
+            p.sendMessage(ChatColor.AQUA + "Safety is now ON.");
+        }
+        
+        return;
+    }
+    
+    if (e.getAction() != Action.RIGHT_CLICK_AIR 
+        && e.getAction() != Action.RIGHT_CLICK_BLOCK) { <4>
+        return;
+    }
+    if (p.getItemInHand().getType() != Material.DIAMOND_BARDING ||
+        safety.get(p.getName())) {
+        return;
+    }
+        
+    Fireball f = e.getPlayer().launchProjectile(Fireball.class);
+    f.setIsIncendiary(false);
+}
+
+@EventHandler
+public void makeBigExplosion(EntityExplodeEvent event) { <5>
+    Entity e = event.getEntity();
+
+    if (!(e instanceof Fireball)) {
+        return;
+    }
+    Fireball f = (Fireball) e;
+    if (f.isIncendiary()) {
+        return;
+    }
+    World w = f.getWorld();
+    w.createExplosion(f.getLocation(), 10.0F);
+    event.setCancelled(true);
+}
+----
+====
+
+There are some important parts in this code:
+
+<1> A `HashMap` variable is created to store the safety state of all the players.
+<2> This method is called when a player joins the server. The server then generates the event and is captured as `PlayerJoinEvent` Bukkit class. If a player without a safety value joins, they get a default value of true, meaning that rocket launchers won't fire for them unless they turn off the safety.
+<3> This method is called when a player interacts with an object or air. The server then generates an event and is captured as `PlayerInteractEvent` Bukkit class.
+<4> Specific interactions of a player can be identified by calling `getAction()` method on the event. If the player left clicks in air or on a block then we check the item in hand. If the item in hand with is diamond horse armor (DIAMOND_BARDING), then their safety state is switched from off to on or vice versa. The player is notified about their safety state. `get` and `put` are methods on `HashMap` to retrieve the stored values and save the values respectively.
+<4> If the player right clicks with a diamond horse armor, a fireball is created. It is not incendiary, meaning it won't make fire. This is to identify it as a rocket launcher fireball, and not a different fireball.
+<5> This method is called when an entity explode event happens, as identified by `EntityExplodeEvent` Bukkit class. If the entity is a fireball and it is not incendiary, it will stop the explosion and make a much bigger one, because the fireball is from a rocket launcher.
+
+Now, build the plugin and install it into your server. Get a Diamond Horse Armor from your inventory, turn the safety off by left-clicking with it, and blow up whatever you want! <<RocketLauncher_Explosion>> shows the size of an explosion made by a rocket launcher.
+
+[[RocketLauncher_Explosion]]
+.RocketLauncher explosion
+image::images/rocket-launcher-explosion.png[]
+
+=== Summary
+
+This chapter showed you some more examples of fun plugins that can be made using the Bukkit API. You added TNT magnets for blowing up stuff and rocket launchers to make even more explosions. 
+
+A void return type from Java method and an advanced Java concept of inheritance was also explained. A new Bukkit event handler that shows how to handle player interaction was explained as well.
+
+How to handle when player interacts with an object or air

@@ -1,0 +1,27 @@
+= Building Minecraft Plugins with Spigot
+
+include::First_Plugin.adoc[]
+
+include::Block-Money-Chapter.adoc[]
+
+include::ZombieBones-Chapter.adoc[]
+
+include::BiggerTNT-Chapter.adoc[]
+
+include::FlamingPigs-Chapter.adoc[]
+
+include::ThrowEgg-Chapter.adoc[]
+
+include::SpongeWater-Chapter.adoc[]
+
+include::TowerBuilder-Chapter.adoc[]
+
+include::RecipesEnchantments-Chapter.adoc[]
+
+include::ExplosionPlugins-Chapter.adoc[]
+
+include::WarpBoard-Chapter.adoc[]
+
+include::Getting-Started-Bukkit.adoc[]
+
+include::tools-for-building-plugin.adoc[]

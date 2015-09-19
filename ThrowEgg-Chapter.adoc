@@ -1,0 +1,261 @@
+[[Throw_Egg]]
+== Throw Egg
+
+This chapter will build upon the previous chapter and show how commands and Listeners can work together.
+
+When you right-click with an egg item, it gets thrown, and on landing, it has a 12.5% chance of spawning a baby chicken. This plugin will add a command that controls what spawns when the egg lands. So instead of chickens, it could spawn zombies, pigs, or whatever you want it to. You can also configure how many of that mob will be spawned.
+
+=== Create the plugin
+
+First of all, like all other plugins, use the Bukkit Recipe to create a new plugin. The information for plugin creation is quite similar to <<PlayerEntryExit_Plugin_Details_Image>>. <<ThrowEgg_plugin_values>> shows the values that needs to be updated.
+
+[[ThrowEgg_plugin_values]]
+.ThrowEgg plugin updated values
+[options="header", cols="1,3"]
+|====
+| Field | Value
+| Project Name | ThrowEgg
+| Package | org.devoxx4kids.bukkit.plugins.throwegg
+|====
+
+Click on `Finish' button to complete the plugin creation and open the project. The expanded directory should look like as shown in <<ThrowEgg_Expanded_Directory_Structure>>.
+
+[[ThrowEgg_Expanded_Directory_Structure]]
+.ThrowEgg expanded directory structure
+image::images/netbeans-create-plugin-throw-egg-directory-structure-expanded.png[]
+
+Like other plugins created so far, there is `org.devoxx4kids.bukkit.plugins.flamingpigs.MyPlugin` class, `plugin.yml` that defines plugin configuration and used for command registration, and `pom.xml` that defines instructions on how to build and install the plugin.
+
+=== Register the command
+
+Like the last plugin, you will need to register a new command in `plugin.yml`. The updated `plugin.yml` file should look like <<ThrowEgg_Finished_plugin_yml>>.
+
+[[ThrowEgg_plugin_yml]]
+.ThrowEgg plugin.yml
+====
+[source, yaml]
+name: ThrowEgg
+version: "1.0-SNAPSHOT"
+author: Aditya Gupta
+main: org.devoxx4kids.bukkit.plugins.throwegg.MyPlugin
+commands:
+  <emphasis role="strong">eggconfig:
+    description: control what hatches from an egg and how many of it.
+    usage: /eggconfig &lt;entity to hatch&gt; &lt;number of entities to hatch&gt;
+    aliases: ec
+====
+
+The file is very similar to the one shown in <<FlamingPigs_Finished_plugin_yml>>. The updated sections are highlighted in bold.
+
+A new command `eggconfig` is added with an alias `ec`. The command requires two arguments, first is the entity to hatch and second is the number of entities to hatch. Other properties are intuitively named and explained in <<Flaming_Pigs>>.
+
+=== Add command functionality
+
+Now, like the last plugin, the command is registered, but doesn't do anything. Functionality will have to be added in `MyPlugin.java`.
+
+First of all, a couple of variables are defined to store the entity type and the number of entities to hatch from the command. These variables are shown in <<ThrowEgg_Variables_To_Add>>
+
+[[ThrowEgg_Variables_To_Add]]
+.Variables to add in ThrowEgg MyPlugin.java
+====
+[source, java]
+----
+public static EntityType entityType; <1>
+public static int numberOfEntities; <2>
+----
+====
+
+<1> This variable stores an `EntityType` type, which is a type defined by Bukkit and is used to identify the entity type specified in the command. It is used in methods that spawn entities to determine what entity should be spawned.
+<2> `numberOfEntities` is an integer variable that will store the number of entities that should be spawned.
+
+These variables do not have any use right now, so code will have to be added to use them. This code is shown in <<ThrowEgg_Command_Method>> and should be added as the last method in the file. If you recall, this can be easily done by placing your cursor after the first `}` after `onDisable` method in `MyPlugin.java`. Press Enter key to create space add this method there.
+
+[[ThrowEgg_Command_Method]]
+.ThrowEgg command method
+====
+[source, java]
+----
+@Override
+public boolean onCommand(CommandSender sender,
+                         Command cmd, 
+                         String label, 
+                         String[] args) {
+
+    if (!(cmd.getName().equals("eggconfig"))) { <1>
+        return false;
+    }
+    if (args.length != 2) { <2>
+        sender.sendMessage(ChatColor.DARK_RED + cmd.getUsage()); 
+        return false;
+    }
+    
+    try{ <3>
+        entityType = EntityType.valueOf(args[0]
+                                        .toString()
+                                        .toUpperCase());
+    } catch (NullPointerException npe){
+        sender.sendMessage(ChatColor.RED + 
+            entityType.toString() + ChatColor.DARK_RED + 
+            " is not a valid entity!");
+        return false;
+    }
+    
+    try{ <4>
+        numberOfEntities = Integer.parseInt(args[1]);
+    } catch (NumberFormatException nfe){
+        sender.sendMessage(ChatColor.RED + args[1] 
+            + ChatColor.DARK_RED + " is not a valid number!");
+        return false;
+    }
+    
+    sender.sendMessage(ChatColor.GREEN + "Eggs will now hatch " <5>
+        + numberOfEntities + " " + entityType + "(s)."); 
+    
+    return true; <6>
+}
+----
+====
+
+This code is quite similar to the one shown in <<Flaming_Pigs>> but has a few differences:
+
+<1> If the command is not `eggconfig` or one of its aliases, this method will return false and stop running any further.
+<2> The method will also stop running if the number of arguments is not two. The first argument is the entity type and second argument denotes the number of entities to hatch.
+<3> `toUpperCase()` is a method on Java-defined String class that converts the first argument to all upper case letters. Note that the first argument is identified by 0th element of the array. This conversion is required as `EntityType` stores all Minecraft defined entities in upper case letters.
++
+`NullPointerException` is a Java defined class that ``catch''es an error if the conversion is not successful. The player is notified with a message and false value is returned from the catch block to stop further execution of the program. If the conversion is successful then the variable `entityType` is initialized to the entity that needs to be spawned with this command.
++
+The complete list of entities is defined in http://jd.bukkit.org/apidocs/org/bukkit/entity/EntityType.html.
++
+<4> Second element of the `args` array, indexed by 1, is then converted to integer. As discussed in the previous chapter, `NumberFormatException` is a Java defined class and is used to catch any exception if the string can not be parsed into an integer. If the conversion is sucessful then the `numberOfEntites` variable is set to the number of entities to spawn. If the value is invalid and the conversion is not successful, then the player is notified of that and the method stops running any further.
++
+Note that two try/catch blocks are specified in this method and its perfectly valid to do so.
++
+<5> If everything looks good then the player is sent a message indicating the entity and the number of entities to spawn.
+<6> Finally, the method will return a value of true to indicate that the command execution is successful.
+
+Now, the command sets the variables to whatever the player inputs. The variables' values still are not used anywhere, so a Listener will have to be added. The Listener will check for a chicken being hatched from an egg and change the chicken to the entity in `entityType`.
+
+=== Register and create the Listener
+
+In `MyPlugin.java`, add a line in the `onEnable()` method that looks like <<ThrowEgg_Register_Listener>> to register the Listener.
+
+Remember you need to create empty lines by placing your curson before `}` and pressing Enter key and then add the code there.
+
+[[ThrowEgg_Register_Listener]]
+.Register the ThrowEgg Listener
+====
+[source, java]
+----
+getServer().getPluginManager()
+    .registerEvents(new EggListener(),
+      this);
+----
+====
+
+Click on the stop sign next to this line and select the option shown in <<ThrowEgg_Create_Listener>>.
+
+[[ThrowEgg_Create_Listener]]
+.Create the ThrowEgg Listener
+image::images/netbeans-create-plugin-throw-egg-create-listener.png[]
+
+This will generate a new class `EggListener` and open it in NetBeans.
+
+=== Add event handlers
+
+First of all, delete the constructor in the Listener. The constructor looks like <<ThrowEgg_Listener_Constructor>>.
+
+[[ThrowEgg_Listener_Constructor]]
+.ThrowEgg Listener constructor
+====
+[source, java]
+----
+public EggListener() {
+}
+----
+====
+
+The code in <<ThrowEgg_Listener_Method>> will have to be added into the Listener for it to work.
+
+[[ThrowEgg_Listener_Method]]
+.ThrowEgg Listener method
+====
+[source, java]
+----
+@EventHandler
+public void hatchEntity(CreatureSpawnEvent event) { <1>
+    Entity entity = event.getEntity(); <2>
+    Location location = entity.getLocation();
+    World world = entity.getWorld();
+
+    if (event.getSpawnReason() == SpawnReason.EGG <3>
+    && event.getEntityType() == EntityType.CHICKEN) {
+        entity.remove(); <4>
+        for (int i = 0 ; i < MyPlugin.numberOfEntities ; i++) {
+            world.spawnEntity(location, MyPlugin.entityType);
+        }
+    }
+}
+----
+====
+
+This code should look quite familiar if you've worked through the previous chapters. However there are a few important things to explain in this code:
+
+<1> This method is run when a creature is spawned into the world and is identified by `CreatureSpawnEvent` Bukkit class. In this case, we will be using it to check for a chicken spwaning from a thrown eggs.
+<2> The entity spawned, its location, and its world are stored in variables called `entity`, `location`, and `world`, respectively.
+<3> We learned about `==` operator for comparing values. So the spawn reason for an entity is checked to be an egg by comparing the values returned from `event.getSpawnReason()` and `SpawnReason.EGG`. Both of these values are obtained using Bukkit API. Similarly the entity type is checked to be of type chicken. This statement has a new `&&` operator. It allows to combine two or more boolean statements together and provide a unified result. `&&` is called as logical AND operator. Another similar operator is `||` and is called logical OR. The results of these operators on two boolean operands is shown in <<Logical_Operator_Results>>.
++
+[[Logical_Operator_Results]]
+.Logical operator results
+[options="header", cols="1,1"]
+|====
+| Operand 1 | Operator | Operand 2 | Result
+| true | && | true | true
+| true | && | false | false
+| false | && | true | false
+| false | && | false | false
+| true | || | true | true
+| true | || | false | true
+| false | || | true | true
+| false | || | false | false
+|====
++
+Based upon this table, the method only continues if the entity spawned was a chicken and it spawned from a thrown egg.
++
+<4> The body of `if` statement removes the entity from the world by calling `entity.remove()` Bukkit method. Finally, the `for` loop is used to spawn the chosen entity, defined by `MyPlugin.entityType`, at the location of the now dead chicken. The number of iterations is defined by `MyPlugin.numberOfEntites`.
+
+=== Install and verify
+
+Now, you can build the plugin and restart your server to install it.  Use the ``/reload'' command to reload the server, then check that it works. Use the command in <<ThrowEgg_Command>> to change what the egg spawns.
+
+[[ThrowEgg_Command]]
+.ThrowEgg command
+====
+[source, text]
+----
+/eggconfig <entity type> <number of entities>
+----
+====
+
+Try the full command `eggconfig`, the alias `ec`, different entities to hatch as defined at http://jd.bukkit.org/apidocs/org/bukkit/entity/EntityType.html, invalid text for specifying the number and validating that the error message shows correctly.
+
+Some fun things you can do are:
+
+. Make the egg spawn 100 BAT and make a ``bat cloud''
+. Make the egg spawn 1 PRIMED_TNT and make explosive eggs
+. Make the egg spawn 100 ZOMBIE and make a zombie apocalypse
+
+There are lots of fun things you can do with this plugin!
+
+<<ThrowEgg_Command_Output>> shows the output that comes when you do the command.
+
+[[ThrowEgg_Command_Output]]
+.ThrowEgg command output
+image::images/netbeans-create-plugin-throw-egg-minecraft-output.png[]
+
+The player set eggs to hatch 5 ZOMBIEs, then 50 BATs, then 17 WITCHes.
+
+=== Summary
+
+This chapter built upon the previous chapter by registering a new command in `plugin.yml`. The command lets you configure what a thrown egg should hatch, and how many of it, when it hits the ground. It utilized both command registration in `plugin.yml` and a Listener.
+
+In the process, the chapter also explained how multiple try/catch blocks can exist in the same method. Two logical operators in Java, `&&` and `||` were also explained.

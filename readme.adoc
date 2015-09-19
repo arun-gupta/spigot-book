@@ -1,0 +1,4 @@
+= Minecraft Modding using Spigot
+
+This book shows how to create Minecraft Mods using Spigot.
+

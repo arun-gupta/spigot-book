@@ -1,0 +1,100 @@
+[[Tools_for_building_plugins]]
+== Tools for Building Plugins
+
+The chapter provides a brief introduction to Maven and how it is used to build plugins. It concludes with guidance on tools to simplify the process of building plugins.
+
+[[Maven]]
+=== Maven
+
+As explained in <<Getting_Started_with_Java>>, JARs are created by packaging Java source files and configuration files. The source files are compiled into classes using `javac` command, and finally packaged into JAR files using `jar` command. This process is commonly known as ``build''. Building a plugin manually everytime is tedious as multiple Java source files may need to be compiled together. Similarly different class files and resources may need to be bundled to create a JAR file. Maven is a tool that simplifies building JAR files, plugin in our case.
+
+Complete books have been written to understand the workings of Maven. However we need to understand some basic principles only to create our plugin:
+
+. *Project Structure*: All Java source files and configuration files are put together in a __project__. Maven requires all files in a project belong to one directory. This top level directory has different directories for everything in the project, such as Java source files, resources, and configuration files. For example, all Java source files go in `src/main/java`, all resources go in `src/main/resources` directory, and all configuration files go in `src/main/configuration` directory. These directory locations can be overridden but that is typically not needed. This really simplifies creating your plugin as you can look at Java project from a friend and instantly understand where the source and configuration files should be.
+. *Project Object Model (POM)*: POM provides a detailed description of your project. It is commonly named __pom.xml__, and placed in the top level project directory. Typically pom.xml will contain lots of information, however for our plugin the most important information is the version of Bukkit API that is used to build our plugins. This would be specified as shown in <<CraftBukkit_maven_dependency>>.
++
+[[CraftBukkit_maven_dependency]]
+.CraftBukkit maven dependency
+====
+[source,xml]
+----
+<dependency>
+    <groupId>org.bukkit</groupId>
+        <artifactId>craftbukkit</artifactId>
+        <version>1.7.9-R0.2</version>
+        <scope>provided</scope>
+        <type>jar</type>
+    </dependency>
+</dependencies>
+----
+====
++
+This will be automatically generated for us so don't worry too much about the syntax.
++
+.Change CraftBukkit API version
+[TIP]
+====
+Maven dependency shown above specifies the CraftBukkit API version to 1.7.9-R0.2. If a newer version of CraftBukkit API is released, or a different version of the API needs to be used then this value needs to match the new one.
+====
++
+. *Phases*: Maven ``builds'' the project using a small set of _commands_. Each command can have different _phases_. A command, or any of the phase, is issued to Maven to perform a specific action. If a command is issued then all phases within it are invoked as well.
++
+For example `compile` phase compiles the project source code, `package` phase packages the compiled code in its distributable format (JAR in our case), `install` installs the package into the local repository, and others. There are several other phases such as `validate`, `test`, and `verify` but we'll mostly be dealing with `compile`, `package`, and `install` phases only.
++
+Once again, we'll be using these commands in a much simplified way but its good to understand whats happening under the hood.
++
+. *Maven repository* is used to hold the JAR files that are specified as dependencies in `pom.xml`.
++
+A repository can be either __local__ or __remote__. A remote repository is typically accessible using http:// protocol, hosted on Internet, and serves JAR files that provide different functionality. The dependencies on remote repository are published by the person or company creating the JAR file so that others can access it.
++
+A local repository is a cache of the remote downloads on your local machine.
++
+By default, Maven tries to find, or resolve, dependencies in the local repository. If they are not available in the local repository then Maven downloads it from the remote repository and caches it in the local repository. This reduces the need to download the dependencies from remote repository every time.
+
+All the directories, source and configuration files, and POM together are referred as __Maven project__.
+
+[[Maven_project,_phases_and_repositories]]
+.Maven project, phases, and repositories
+image::images/maven-flow.png[]
+
+For authoring our plugins, we'll create a Maven project with CraftBukkit dependency (which includes Bukkit API), and use Maven to package them in a JAR file and copy it to our Minecraft server.
+
+[[Tools_for_Authoring_Plugins]]
+=== Tools for Authoring Plugins
+
+Building a plugin requires the steps outlined in <<Steps_for_creating_a_plugin>>:
+
+. Generate a Maven project with CraftBukkit dependency in `pom.xml`
+. Author Java files, edit configuration files, create new images, etc.
+. Compile and package them in a JAR file
+. Copy the JAR file to CraftBukkit's `plugins` directory
+
+[[Steps_for_creating_a_plugin]]
+.Steps for creating a plugin
+image::images/create-plugin-flow.png[]
+
+First step will be explained in <<Create_Sample_Plugin>>. As explained in the previous sections, the third step is easily automated using Maven. Fourth step is fairly straight forward with usual operating system commands, and we'll see how Maven helps us in that. Most of our time however will be spent in the second step.
+
+Java files can be authored using Notepad or any simple text editor. But that's like going from San Francsico to New York , which is over 2500 miles, driving in a car. It will take a few days to reach the destination but could be a lot of fun as you'll visit all the states in between, eat at local restaurants, and meet different people. Now imagine you've to travel between the two cities regularly. This would certainly become very time consuming and boring very quickly. In that case, a more efficient way to travel between these two cities is to fly in a plane. This will not only save you time but will also be a lot more efficient.
+
+Integrated Development Environment, or popularly known as IDEs, are tools that simplify the entire process of authoring Java source files and then invoking Maven lifecycles to compile and package them into JAR files. These IDEs provide several advantages over a simple text based editor such as showing visual hints if the syntax of your program is not correct. In several cases the IDEs will also provide a `quick fix' that can be applied to solve the error. This allows you to fix the error before compiling the source code. Another powerful adavantage is easy-to-use menu items that enable you to compile and bundle the classes and resource files in a JAR file with a single click. Overall, this allows you to spend more time on writing the plugins instead of how to fix the errors and package the JAR file.
+
+There are several IDEs available to download. In general, here are the capabilities that we are looking for in an IDE:
+
+. Runs on all the common operating systems such as Macintosh, Windows, and Linux
+. Provide in-built support for Java authoring and Maven
+. Simple and intuitive interface
+
+You are free to choose any IDE that you prefer, This book will use NetBeans for its simple and intuitive interface.
+
+==== NetBeans
+
+The NetBeans IDE can run on Macintosh, Windows, Linux, and other operating systems that has a JVM. It can be downloaded from https://netbeans.org/downloads/. Make sure to click on ``Download'' button in ``Java SE'' column as shown in <<NetBeans_download>>.
+
+[[NetBeans_download]]
+.NetBeans download
+image::images/netbeans-download.png["NetBeans Download"]
+
+=== Summary
+
+The chapter provided a brief introduction to Maven and how it is useful for building plugins. The chapter finally provided some guidance on tools that simplify the process of creating JAR files.

@@ -1,0 +1,107 @@
+[[More_Listeners]]
+== More Listeners
+
+In the last chapter, you explored Listeners and Event Handlers more by making zombies drop bones. In this chapter, you will see another example of Listeners and Event Handlers by making a plugin that enlarges TNT explosions. TNT is a block in Minecraft and can be lit with a Flint and Steel item. There are multiple other ways to light it as well. However once lit, it will then explode after 4 seconds. Normally, TNT has a blast radius of 4 blocks, which isn't that big. Bigger TNT explosions are more fun and so we will change that and make the explosions bigger. One cool thing you can do with TNT is make cannons that shoot lit TNT for far distances.
+
+=== Create the plugin
+
+After making a few plugins, you should now be an expert in how to get started with creating a sample plugin. So, as always, we start with the Bukkit Recipe. The plugin information should match <<BiggerTNT_Plugin_Information>>.
+
+[[BiggerTNT_Plugin_Information]]
+.BiggerTNT plugin information
+image::images/netbeans-create-plugin-biggertnt.png[]
+
+Finish the plugin creation and you should see a directory structure like <<BiggerTNT_Directory_Structure>>.
+
+[[BiggerTNT_Directory_Structure]]
+.BiggerTNT directory structure
+image::images/netbeans-create-plugin-biggertnt-directory-structure.png[]
+
+When you expand the ``Source Packages'', ``Other Sources'', and ``Project Files'' packages, it should look like <<BiggerTNT_Directory_Structure_Expanded>>.
+
+[[BiggerTNT_Directory_Structure_Expanded]]
+.BiggetxrTNT expanded directory structure
+image::images/netbeans-create-plugin-biggertnt-directory-structure-expanded.png[]
+
+This directory has `org.devoxx4kids.bukkit.plugins.biggertnt.MyPlugin` class which is the entry point of the plugin, `plugin.yml` that defines plugin configuration, and `pom.xml` that defines instructions on how to build and install the plugin.
+
+=== Create the Listener
+
+Now, create a Listener like you did in the ZombieBones plugin. Add the line from <<BiggerTNT_Register_Listener>> in the `onEnable` method of `MyPlugin.java`.
+
+[[BiggerTNT_Register_Listener]]
+.Registering the BiggerTNT Listener
+====
+[source, java]
+----
+getServer().getPluginManager()
+.registerEvents(new TNTListener(), this);
+----
+====
+
+This code registers the `TNTListener` class as the plugin's Listener. Click on the stop sign and select the option shown in <<Creating_TNTListener_from_dropdown_menu>>.
+
+[[Creating_TNTListener_from_dropdown_menu]]
+.Creating the TNTListener from the drop-down menu
+image::images/netbeans-create-plugin-biggertnt-create-listener.png[]
+
+=== Adding event handlers
+
+Now, a method will have to be added to the Listener. It looks like <<BiggerTNT_Listener_Method>>.
+
+[[BiggerTNT_Listener_Method]]
+.BiggerTNT Listener method
+====
+[source, java]
+----
+@EventHandler
+public void makeExplosion(EntityExplodeEvent event) { <1>
+    EntityType entitytype = event.getEntityType();
+    World world = event.getEntity().getWorld();
+    Location location = event.getEntity().getLocation();
+
+    float power = 16.0F; <2>
+    if (entitytype == EntityType.PRIMED_TNT) { <3>
+        event.setCancelled(true);
+        world.createExplosion(location, power);
+    }
+}
+----
+====
+
+There are some important parts in this method:
+
+<1> This method is called when an entity explodes. The entity can be a creeper, a primed TNT, or an ender crystal. Three variables are created to store three things: The entity's type, the entity's world, and the entity's location.
+<2> A float variable with a value of 16.0 is created here. It is called `power` and will be used to determine how big the TNT explosion is. If you set it to a value over 16, it will make an explosion with a 16 block radius, because that is the limit defined in the game's code.
+<3> If the entity is a primed TNT, its explosion is cancelled. A bigger one, with the power of the variable `power`, is created in the same place.
+
+=== Build and install the plugin
+
+Now, the plugin must be built so that you can install it on your server. Right-click on the plugin and select ``Build''. The output that you get should look like <<BiggerTNT_Build_Output>>.
+
+[[BiggerTNT_Build_Output]]
+.BiggerTNT build output
+====
+[source, text]
+....
+[antrun:run]
+Executing tasks
+     [copy] Copying 1 file to C:\Users\Aditya\Desktop\craftbukkit\plugins
+Executed tasks
+------------------------------------------------------------------------
+BUILD SUCCESS
+------------------------------------------------------------------------
+....
+====
+
+Now, a TNT will have a blast radius of 16 blocks. <<BiggerTNT_Explosions>> compares the size of a normal explosion to a enlarged one.
+
+[[BiggerTNT_Explosions]]
+.Comparison of TNT explosion sizes
+image::images/netbeans-create-plugin-biggertnt-explosion-sizes.png[]
+
+The areas that are not green have been blown up. The small explosion didn't reach to stone, so the crater is brown from dirt. The big explosion's crater is gray because it contains stone. The big crater also contains other blocks you can find under the stone, like ores and gravel.
+
+=== Summary
+
+In this chapter, you explored more examples of Listeners and Event Handlers. You checked for a TNT explosion with `EntityExplodeEvent`, cancelled it, and made a bigger one in its place. In the next chapter, you will learn how to add new commands to the game.

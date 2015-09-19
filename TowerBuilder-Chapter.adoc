@@ -1,0 +1,176 @@
+[[Tower_Builder]]
+== Tower Builder
+This chapter will show how to build a pre-set schematic of blocks, something like a tower of iron or a quartz mansion.
+
+Now that you have an idea of how to build a structure, we will make a plugin that allows you to create towers wherever you want. This plugin will add a command that creates a tower with whatever material and height that you want.
+
+Towers like the ones created by this plugin can be created normally, but if you want to make really high towers, it could take a while. You would have to place eight blocks for each layer of the tower, so for a 100 block tower, you would have to place 800 blocks! That would be very time-consuming and not very fun either. This plugin lets you make towers with just one command, so you can focus on other fun aspects of Minecraft instead of spending your time building towers.
+
+=== Create the plugin
+
+First of all, like all other plugins, use the Bukkit Recipe to create a new plugin. The information for plugin creation is quite similar to <<PlayerEntryExit_Plugin_Details_Image>>. <<SpongeWater_plugin_values>> shows the values that needs to be updated.
+
+[[TowerBuilder_plugin_values]]
+.TowerBuilder plugin updated values
+[options="header", cols="1,3"]
+|====
+| Field | Value
+| Project Name | TowerBuilder
+| Package | org.devoxx4kids.bukkit.plugins.towerbuilder
+|====
+
+Click on `Finish' button to complete the plugin creation and open the project.
+
+Now that you've built several plugins, you can click around the project and look for the expanded directory yourself.
+
+=== Register the command
+
+This plugin does not require a Listener, as it is command-only. First, the command will have to be registered. The updated `plugin.yml` is shown in <<TowerBuilder_updated_plugin_yml>>. The code that needs to be added is shown in bold.
+
+[[Tower_Registering_Command]]
+.Register tower command
+====
+[source, yaml]
+name: ThrowEgg
+version: "1.0-SNAPSHOT"
+author: Aditya Gupta
+main: org.devoxx4kids.bukkit.plugins.throwegg.MyPlugin
+commands:
+  commands:
+  tower:
+    description: make a tower of &lt;material&gt; that is &lt;height&gt; blocks tall.
+    usage: /tower &lt;material&gt; &lt;height&gt;
+====
+
+This will introduce a new command `tower` that will take two arguments. The first argument is the material to be used for building the tower and the second argument is the height of the tower.
+
+Note, no alias of the command is specified as that is optional.
+
+=== Add command functionality
+
+After the command is registered, functionality must be added to it with the `onCommand()` method in `MyPlugin.java`. The code for doing this is shown in <<Tower_Command_Method>> and must be added to the end of `MyPlugin.java`.
+
+[[Tower_Command_Method]]
+.Tower onCommand method
+====
+[source, java]
+----
+@Override
+public boolean onCommand(CommandSender sender, 
+                         Command cmd, 
+                         String label, 
+                         String[] args) {
+    if (!(cmd.getName().equals("tower"))) { <1>
+        return false;
+    }
+    if (!(sender instanceof Player)) {
+        return false;
+    }
+    if (args.length != 2) {
+        sender.sendMessage("Usage: /tower <material> <height>");
+        return false;
+    }
+
+    Material material = Material.matchMaterial(args[0]); <2>
+    
+    if(material == null){
+        sender.sendMessage(ChatColor.RED + args[0] 
+            + ChatColor.DARK_RED + " is not a valid material!");
+        return false;
+    }
+    
+    int height; <3>
+    
+    try{
+        height = Integer.parseInt(args[1]);
+    } catch (NumberFormatException nfe){
+        sender.sendMessage(ChatColor.RED + args[1] 
+            + ChatColor.DARK_RED + " is not a valid number!");
+        return false;
+    }
+
+    int x = ((Player) sender).getLocation().getBlockX(); <4>
+    int y = ((Player) sender).getLocation().getBlockY();
+    int z = ((Player) sender).getLocation().getBlockZ();
+
+    int[] tower = {
+        x + 1, y, z,
+        x - 1, y, z,
+        x, y, z + 1,
+        x, y, z - 1,
+        x + 1, y, z + 1,
+        x - 1, y, z - 1,
+        x + 1, y, z - 1,
+        x - 1, y, z + 1
+    };
+
+    World world = ((Player) sender).getWorld(); <5>
+
+    int layer = 0;
+
+    for (int i = 0; i < height; i++) { <6>
+        for (int j = 0; j < tower.length; j += 3) {
+            world.getBlockAt(tower[j], 
+                tower[j + 1] + layer,
+                tower[j + 2]).setType(material);
+        }
+        layer++;
+    }
+
+    sender.sendMessage(ChatColor.GREEN + "You made a tower of " <7>
+        + material + " that is " + height + " blocks high."); 
+    return true;
+}
+----
+====
+
+A good part of this code should look familiar as it has been explained in previous chapters. There are some things that need explanation.
+
+<1> If the command is `/tower`, a player is running it, and there are 2 arguments, the method continues. If not, it returns false and stops execution. All of these statements have been explained earlier.
+<2> `Material` is a Bukkit class that provides a `matchMaterial` method that can take any string parameter and returns a matching material. The exact list of material is shown at http://jd.bukkit.org/apidocs/org/bukkit/Material.html.
++
+A variable `material` is created to store the material specified by the player. First argument to the command, identified by index 0 in `args` parameter, provides the first user input.
++
+This method returns `null` if no match is found. `null` is also a Java keyword that means an invalid value. If the material is indeed invalid then a message is displayed to the player, false is returned from the method and further execution is stopped.
++
+<3> Another variable, `height`, is created to store the tower's height. Second argument to the command, identified by index 1 in `args` parameter, provides the second user input. If it is not a number, the method returns false and further execution is stopped. try/catch block are used to do exception handling here.
+<4> Three variables, `x`, `y`, and `z`, store the player's current x, y, and z coordinates. A new array of integer is created based upon player's current position and contain the positions for one layer of the tower. The array is called `tower`.
+<5> Two variables are created, one to store the world and another called `layer` that will be used in the creation of the tower.
+<6> A nested for loop makes tower layers on top of each other until the tower reaches the height specified by the player.
+<7> The player is sent a message telling them what their tower was built from and how tall it was.
+
+=== Install and verify
+
+Now, you can build this plugin and install it to your server. The towers from the plugin are useful for building cool structures and spawnpoints. 
+
+<<TowerBuilder_Minecraft_Output>> shows some of the different kinds of towers that can be created with this plugin. The tower on the left is made of COAL_ORE and is 2 blocks tall. The middle tower is made of DIAMOND_BLOCK and is 10 blocks tall. The tower on the right is made of IRON_BLOCK and is 5 blocks tall.
+
+[[TowerBuilder_Minecraft_Output]]
+.TowerBuilder towers
+image::images/netbeans-create-plugin-tower-builder-minecraft-output.png[]
+
+The commands used to generate these towers are shown in 
+
+[[TowerBuilder_Sample_Commands]]
+.TowerBuilder Sample Command
+====
+[source, text]
+----
+/tower COAL_ORE 2
+/tower DIAMOND_BLOCK 10
+/tower IRON_BLOCK 5
+----
+====
+
+Note the tower is created at player's current location. So the first tower is created by giving the first command, the player moves to the next location and issues the second command, and the player moves to the last location and creates the last tower.
+
+You can make towers with any blocks and with any heights. Note that you cannot have blocks over the Minecraft height limit, which is 256 blocks above the bottom of the world.
+
+One fun thing you can do is make ``flaming blocks''. Make a tower of Mob Spawners (MOB_SPAWNER), then make a tower of the same height and at the same place, but with another block. Flame particles will appear around the second tower, making it look like its on fire.
+
+=== Summary
+
+In this chapter, you learned how to generate structures with commands. You built on the concepts from the last chapter to make a plugin that allows you to build towers with commands.
+
+The Java concepts learned so far, such as exception handling using try/catch, nested for loops, arrays, `instanceof` operator, were applied once again. In addition, the `null` keyword was introduced.
+

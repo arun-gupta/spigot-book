@@ -1,0 +1,328 @@
+[[Flaming_Pigs]]
+== Flaming Pigs
+
+Have you ever wanted to add new commands to Minecraft? With Bukkit, you can do that. In this chapter, we will learn how to add new commands to the game. 
+
+In Minecraft, pigs aren't normally on fire. The only way to ignite them is to push them into a fire block or into lava. This plugin will add a command that lets you spawn whatever number of pigs you want and also sets them on fire. It isn't really very useful, just funny to see a bunch of pigs on fire. And isnt't that what the entire game of Minecraft is about ?
+
+=== Create the plugin
+
+If you've followed the previous chapters, you exactly know how to get started. Yep, we'll use Bukkit Recipe to create this plugin. The information for plugin creation is quite similar to <<PlayerEntryExit_Plugin_Details_Image>>. <<FlamingPigs_plugin_values>> shows the values that needs to be updated.
+
+[[FlamingPigs_plugin_values]]
+.FlamingPigs plugin updated values
+[options="header", cols="1,3"]
+|====
+| Field | Value
+| Project Name | FlamingPigs
+| Package | org.devoxx4kids.bukkit.plugins.flamingpigs
+|====
+
+Click on `Finish' button to complete the plugin creation and open the project. The expanded directory should look like as shown in <<FlamingPigs_Expanded_Directory_Structure>>.
+
+[[FlamingPigs_Expanded_Directory_Structure]]
+.FlamingPigs expanded directory structure
+image::images/netbeans-create-plugin-flaming-pigs-directory-structure-expanded.png[]
+
+Like other plugins, the initial structure of the project is quite similar. This directory has `org.devoxx4kids.bukkit.plugins.flamingpigs.MyPlugin` class which is the entry point of the plugin, `plugin.yml` that defines plugin configuration and will be used in this plugin, and `pom.xml` that defines instructions on how to build and install the plugin.
+
+=== Register the command
+
+New commands are not registered in a Listener. Instead, they need to be registered in `plugin.yml` which ensures that Bukkit can tell Minecraft about the new command. The actual action of the command needs to be defined in `MyPlugin.java`.
+
+First, we will register the command in `plugin.yml`. Click on the file and it opens up in the main window of NetBeans. The file should currently look like <<FlamingPigs_plugin_yml>>.
+
+[[FlamingPigs_plugin_yml]]
+.FlamingPigs plugin.yml
+====
+[source, yaml]
+----
+name: FlamingPigs
+version: "1.0-SNAPSHOT"
+author: Aditya Gupta
+main: org.devoxx4kids.bukkit.plugins.flamingpigs.MyPlugin
+----
+====
+
+The code you will have to add is pretty simple. It looks like <<FlamingPigs_Registering_Command>>, and should be added at the end of the file. For that, place your cursor at the last line of the file and press Enter key to create a new line. Type the code shown below below there.
+
+[[FlamingPigs_Registering_Command]]
+.Register the flamingpigs command
+====
+[source, yaml]
+----
+commands: <1>
+  flamingpigs: <2>
+    description: spawn a certain number of flaming pigs where you are, which are on fire for 30 seconds. <3>
+    usage: /flamingpigs <number of pigs>
+    aliases: fp
+----
+====
+
+Make sure that the code is indented as shown.
+
+[NOTE]
+====
+YAML is a simple, easy to understand language used commonly to define configuration files. It uses spaces and indents to categorize different items.
+====
+
+There are a few important things in this file:
+
+<1> `commands:` tells you that everything under it is a command. One or more commands can be registered here.
+<2> `flamingpigs:` registers a command under the name of ``/flamingpigs''. Each new command is indented 2 spaces to the right from `commands:` line. The ``/'' is automatically added to the beginning of the command name.
+<3> A text description of what the command does, how it should be used, and aliases of the command are set here. Aliases registers other commands, typically short cuts, that will do the same thing as the original command. Think of it as just another name for this command. So the user can issue the command `/flamingpigs` or a short cut name `/fp` to invoke this command.
++
+All of these fields are again grouped together by indenting 2 spaces to the right. If a new command needs to be added then it will be at the same level of indentation as `flamingpigs:` line is.
+
+Your `plugin.yml` file should now look like <<FlamingPigs_Finished_plugin_yml>>.
+
+[[FlamingPigs_Finished_plugin_yml]]
+.Finished plugin.yml
+====
+[source, yaml]
+name: FlamingPigs
+version: "1.0-SNAPSHOT"
+author: Aditya Gupta
+main: org.devoxx4kids.bukkit.plugins.flamingpigs.MyPlugin
+commands: <1>
+  flamingpigs:
+    description: spawn a certain number of flaming pigs where you are, which are on fire for 30 seconds.
+    usage: /flamingpigs &lt;number of pigs&gt;
+    aliases: fp
+====
+
+The newly added code is highlighted in bold. This ensures that when your plugin is installed then your new command will be registered with Minecraft.
+
+=== Add command functionality
+
+Now your command is ready to be registered, but it doesn't do anything. This functionality needs be added in `MyPlugin.java` so that the command functions properly.
+
+Place your cursor after the first `}` after `onDisable` method in `MyPlugin.java`. Press Enter key couple of times to create space for adding a new method and add the method in <<FlamingPigs_onCommand_Method>> there.
+
+[[FlamingPigs_onCommand_Method]]
+.FlamingPigs onCommand method
+====
+[source, java]
+----
+@Override
+public boolean onCommand(CommandSender sender, <1>
+                         Command cmd,
+                         String label,
+                         String[] args) {
+    if (!cmd.getName().equals("flamingpigs")) { <2>
+    	return false;
+    } 
+    if (!(sender instanceof Player)) { <3>
+        return false;
+    }
+
+    if (args.length != 1) { <4>
+        sender.sendMessage(ChatColor.DARK_RED + cmd.getUsage());
+        return false;
+    }
+
+    Location location = ((Player) sender).getLocation(); <5>
+            
+    int numberOfPigs;
+
+    try { <6>
+        numberOfPigs = Integer.parseInt(args[0]);
+    } catch (NumberFormatException nfe){
+        sender.sendMessage(ChatColor.RED + args[0] + 
+            ChatColor.DARK_RED + " is not a valid number!");
+        return false;
+    }
+
+    for(int i = 0; i < numberOfPigs; i++){ <7>
+        Entity pig = ((Player) sender).getWorld()
+            .spawnEntity(location, EntityType.PIG);
+        pig.setFireTicks(6000);
+    }  
+    return true; <8>
+}
+----
+====
+
+This method uses many Java concepts, and there are many important things in it:
+
+<1> The method `onCommand` is called by Bukkit whenever a command is issued in Minecraft. Bukkit also provides information about the command such as which player issued this command, the actual command that is being issued, alias of the command, and if any arguments were passed. All of this information is available in four parameters of this method.
++
+The method also has `boolean` before the method name `onCommand`. That indicates that the method must return a true value to indicate if the command was valid, false otherwise. When we say `return', it really returns that value to Bukkit and then Bukkit decides to do the right thing with the returned value.
++
+<2> `equals()` is a predefined Java method that compares two String values. It returns true if the two values are equal, false otherwise. It is strongly recommended to use `equals()` method instead of `==` to compare string values.
++
+`cmd.getName()` provides the exact name of the command. The code compares the command name returned by Bukkit with the expected command ``flamingpigs''. If the values do not match, the method returns false and no further lines are executed.
++
+Note that if an alias is used then it is converted to the corresponding command name. The alias used can be accessed `label` parameter.
++
+<3> Commands may be issued at console. However this command is valid only if the command is issued by a player because we need the exact location where the pigs need to be spawned. `instanceof` is another Java keyword that returns true if the left hand side of this keyword is not of the type defined by right hand side. This method returns false again if the command is not issued by a player. And like previous statement, no further statements are executed.
+<4> The arguments to the command are passed as an _array_ of String. Arrays is a Java concept that stores multiple elements of the same type together. The `[]` after the type indicates this is an array, an array of String in this case. Each element of the array can be accessed using an _index_, starting from 0. So the first element is at 0th index, second element is at 1st index, and so on. The number of elements in the array can be found out by invoking `length` operator.
++
+In order to spawn the pigs, the player must specify the number of pigs as an argument to the command. So we check if the number of arguments is not one then a false is returned from the method. In addition, the code also displays a message to the player in dark red color. This is done by calling `sendMessage` method.
++
+<5> Command sender is confirmed to be a player by the time this piece of the code is reached. Java has the concept of _type casting_ that allows a class to be defined to be of a different type, if the rules permit. We will not explain the rules here but lets say the `CommandSender` can be _casted_ to `Player` in this case. Once that is done, we can invoke any methods from the `Player`. In this case specifically we can get the location of the player by calling `getLocation()` method and store it in the `location` variable.
+<6> Its normal for errors to occur when a user input is required. For example the user may accidentally type alphabets or punctuation characters when numbers are required. Java provides a very sophisticated mechanism to deal with such errors and even recover gracefully. This process is called as _exception handling_. A piece of code that is likely to generate an error is put inside a _try_ block. This code may generate an error, or _throw an exception_. The exception is then _caught_ using a _catch_ block. Name of the exception is specified in the catch block. So the try and catch blocks together provides error handling within Java.
++
+In our case, first element of the `args` parameter, defined by 0 index, is attempted to convert to an integer within the try block using a predefined Java method `Integer.parseInt()`. This is where the user input is parsed to be an integer, and potentially a place where an error might be thrown. And so there is a corresponding catch block that tries to catch a predefined `NumberFormatException` exception which is a predefined Java class. This exception is thrown when a String is converted to a numeric type but does not have the appropriate format.
++
+More information about the exception thrown can be obtained from the `nfe` variable. It is a convenient name derived by using the first letter of the exception class name.
+<7> Java provides a means to repeat a certain piece of code one or more times easily. The number of times the code needs to be repeated can be a predefined number or until a condition is met. This is achieved using _loops_. Each repetition of the code is called as an _iteration_.
++
+A loop consists of an _initial state_ that is typically initializing a variable. This variable is typically incremented or deceremented for each iteration, and is aptly called _iteration statement_. And finally there is an _exit condition_ which defines under what condition will the loop be terminated. And of course there is the code that needs to be executed for each iteration, commonly called as _loop body_.
++
+Java offers different kinds of loops and one of them is a _for loop_. This type of loop allows a certain piece of code to be executed a specified number of times. It starts with a Java keyword `for`. The three pieces of this kind of loop, initial state, exit condition, and iteration statement, are specified enclosed within parentheses, in that order, and separated by a `;`. In our case, `i` variable is initialized to 0, the loop is executed `numberOfPigs` times because the loop is executed until `i` is less than `numberOfPigs` variable, and the iteration statement increments of value of `i` by 1 during each statement. 
++
+`++` is a Java operator that can be attached to any integer variable and is a short cut for `i = i + 1`. This is also called as auto-increment operator.
++
+The loop body spawns the pigs at player's current location using `spawnEntity()` method. It is executed using `numberOfPigs` times. When a pig is spawned, it is set on fire using `setFireTicks()` method.
++
+If you recall from Minecraft, each fire tick lasts 1/20th of a second. So 6000 ticks will last for 5 minutes. That will last long enough time for the pig to die!
++
+<4> Finally a `true` value is returned by the method to signify that everything worked.
+
+Finished `MyPlugin.java` should look like <<FlamingPigs_Finished_MyPlugin_java>>
+
+[[FlamingPigs_Finished_MyPlugin_java]]
+.Finished MyPlugin.java
+====
+[source, java]
+package org.devoxx4kids.bukkit.plugins.flamingpigs;
+
+import java.util.logging.Level;
+import org.bukkit.ChatColor;
+import org.bukkit.Location;
+import org.bukkit.command.Command;
+import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.EntityType;
+import org.bukkit.entity.Player;
+import org.bukkit.plugin.java.JavaPlugin;
+
+public class MyPlugin extends JavaPlugin {
+
+    // This code is called after the server starts and after the /reload command
+    @Override
+    public void onEnable() {
+        getLogger().log(Level.INFO, "{0}.onEnable()", 
+            this.getClass().getName());
+    }
+
+    // This code is called before the server stops and after the /reload command
+    @Override
+    public void onDisable() {
+        getLogger().log(Level.INFO, "{0}.onDisable()", 
+            this.getClass().getName());
+    }
+
+    @Override
+    public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
+        if (!(cmd.getName().equals("flamingpigs"))) { <1>
+            return false;
+        }
+
+        if (!(sender instanceof Player)) { <2>
+            return false;
+        }
+
+        Location location = ((Player) sender).getLocation(); <3>
+
+        if (args.length != 1) { <4>
+            sender.sendMessage(ChatColor.DARK_RED + cmd.getUsage());
+            return false;
+        }
+
+        int numberOfPigs; <5>
+
+        try{ <6>
+            numberOfPigs = Integer.parseInt(args[0]);
+        } catch (NumberFormatException nfe){
+            sender.sendMessage(ChatColor.RED + args[1] + 
+                ChatColor.DARK_RED + " is not a valid number!");
+            return false;
+        }
+
+        for (int i = 0; i &lt; numberOfPigs; i++) { <7>
+            Entity pig = ((Player) sender).getWorld() <8>
+                .spawnEntity(location, EntityType.PIG);
+            pig.setFireTicks(6000);
+        }
+        return true; <9>
+    }
+}
+====
+
+=== Install and verify
+
+Like the other plugins, you will have to build the plugin before it can be used. If it successfully builds, it should output the message in <<Building_FlamingPigs>>.
+
+[[Building_FlamingPigs]]
+.Building the FlamingPigs plugin
+====
+[source, text]
+....
+[antrun:run]
+Executing tasks
+     [copy] Copying 1 file to C:\Users\Aditya\Desktop\craftbukkit\plugins
+Executed tasks
+------------------------------------------------------------------------
+BUILD SUCCESS
+------------------------------------------------------------------------
+....
+====
+
+Restart your server and try out the new command! In your chat window, give the command as shown in <<FlamingPigs_Command>>
+
+[[FlamingPigs_Command]]
+.FlamingPigs command
+====
+[source, text]
+----
+/flamingpigs 10
+----
+====
+
+This should spawn 10 pigs at your current location and set them on fire. Since they are on fire, they will die in a few seconds. 
+
+Try with a larger number of pigs, say 100, and see how it works. Try the command alias. So instead of <<FlamingPigs_Command>>, use <<FlamingPigs_Command_alias>>.
+
+[[FlamingPigs_Command_alias]]
+.FlamingPigs command alias
+====
+[source, text]
+----
+/fp 10
+----
+====
+
+If you spawn pigs on the ground, they probably look something like <<FlamingPigs>>.
+
+[[FlamingPigs]]
+.Flaming pigs
+image::images/flaming-pigs.png[]
+
+Also try giving a command that does not include a number as shown in <<FlamingPigs_Command_incorrect_number>>.
+
+[[FlamingPigs_Command_incorrect_number]]
+.FlamingPigs command with incorrect number
+====
+[source, text]
+----
+/flamingpigs bob
+----
+====
+
+This should generate a chat message in dark red color indicating that `bob` is not a number.
+
+One fun thing you can do with it is fly up into the air about 10 blocks and type in the command in <<FlamingPigs_Command>>. 
+
+200 pigs will drop down and they will take damage from falling. When they drop, they will spread out. Since they are on fire, they will die in a few seconds. When they die, the particles created from their deaths will make a ``cloud''. <<FlamingPigs_Cloud>> shows a picture of the ``cloud''.
+
+[[FlamingPigs_Cloud]]
+.FlamingPigs cloud
+image::images/flaming-pigs-cloud.png[]
+
+=== Summary
+
+This chapter taught you how to add new commands to the game using `plugin.yml` and `onCommand()` method of `Plugin.java`. You added a plugin that spawned any number of flaming pigs at player's current location.
+
+Several Java concepts like comparing two string values, arrays, return values, error handling using try/catch blocks, and for loops were explained as well.

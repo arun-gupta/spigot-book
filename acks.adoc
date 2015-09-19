@@ -1,0 +1,9 @@
+[acknowledgement]
+== Acknowledgements
+
+. Meghan Blanchette
+. Tools @ OReilly
+. Ryan Michela
+. Stephan Janssen
+. Devoxx4Kids workshop attendees
+. John and Sean Yeary
