@@ -2,3 +2,6 @@
 
 This book shows how to create Minecraft Mods using Spigot.
 
+Latest copy:
+http://htmlpreview.github.io/?https://raw.githubusercontent.com/arun-gupta/spigot-book/master/book.html
+
