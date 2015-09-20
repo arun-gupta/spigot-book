@@ -1,4 +1,14 @@
-= Building Minecraft Plugins with Spigot
+= Minecraft Modding with Spigot
+v0.1, Sep 20, 2015
+:toc:
+:toc-title: Minecraft Modding with Spigot
+:toclevels: 3
+:toc-placement!:
+
+Latest HTML:
+http://htmlpreview.github.io/?https://raw.githubusercontent.com/arun-gupta/spigot-book/master/book.html
+
+toc::[]
 
 include::First_Plugin.adoc[]
 

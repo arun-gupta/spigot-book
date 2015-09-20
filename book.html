@@ -5,7 +5,8 @@
 <!--[if IE]><meta http-equiv="X-UA-Compatible" content="IE=edge"><![endif]-->
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="generator" content="Asciidoctor 1.5.2">
-<title>Building Minecraft Plugins with Spigot</title>
+<meta name="author" content="v0.1, Sep 20, 2015">
+<title>Minecraft Modding with Spigot</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400">
 <style>
 /* Asciidoctor default stylesheet | MIT License | http://asciidoctor.org */
@@ -411,9 +412,159 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </head>
 <body class="article">
 <div id="header">
-<h1>Building Minecraft Plugins with Spigot</h1>
+<h1>Minecraft Modding with Spigot</h1>
+<div class="details">
+<span id="author" class="author">v0.1, Sep 20, 2015</span><br>
+</div>
 </div>
 <div id="content">
+<div id="preamble">
+<div class="sectionbody">
+<div class="paragraph">
+<p>Latest HTML:
+<a href="http://htmlpreview.github.io/?https://raw.githubusercontent.com/arun-gupta/spigot-book/master/book.html" class="bare">http://htmlpreview.github.io/?https://raw.githubusercontent.com/arun-gupta/spigot-book/master/book.html</a></p>
+</div>
+<div id="toc" class="toc">
+<div id="toctitle" class="title">Minecraft Modding with Spigot</div>
+<ul class="sectlevel1">
+<li><a href="#New_Chapter_1">Your First Plugin</a>
+<ul class="sectlevel2">
+<li><a href="#_bukkit_introduction">Bukkit introduction</a></li>
+<li><a href="#_download_and_install_tools">Download and install tools</a>
+<ul class="sectlevel3">
+<li><a href="#_java">Java</a></li>
+<li><a href="#_craftbukkit">CraftBukkit</a></li>
+<li><a href="#_netbeans">NetBeans</a></li>
+</ul>
+</li>
+<li><a href="#_start_minecraft_server">Start Minecraft server</a></li>
+<li><a href="#_create_the_plugin">Create the plugin</a>
+<ul class="sectlevel3">
+<li><a href="#_generate_project">Generate project</a></li>
+<li><a href="#_register_and_create_the_listener">Register and create the listener</a></li>
+<li><a href="#_add_event_handlers">Add event handlers</a></li>
+<li><a href="#_build_and_install_the_plugin">Build and install the plugin</a></li>
+<li><a href="#_verify_that_it_works">Verify that it works</a></li>
+</ul>
+</li>
+<li><a href="#_summary">Summary</a></li>
+</ul>
+</li>
+<li><a href="#Block-Money-Chapter">Creating In-game Money</a>
+<ul class="sectlevel2">
+<li><a href="#_create_the_plugin_2">Create the plugin</a></li>
+<li><a href="#_register_and_create_the_listener_2">Register and create the Listener</a></li>
+<li><a href="#_add_event_handlers_2">Add event handlers</a></li>
+<li><a href="#_install_and_verify">Install and verify</a></li>
+<li><a href="#_summary_2">Summary</a></li>
+</ul>
+</li>
+<li><a href="#Zombies">Zombies Dropping Bones</a>
+<ul class="sectlevel2">
+<li><a href="#_create_the_plugin_3">Create the plugin</a></li>
+<li><a href="#_register_and_create_the_listener_3">Register and create the Listener</a></li>
+<li><a href="#_add_event_handlers_3">Add event handlers</a></li>
+<li><a href="#_install_and_verify_2">Install and verify</a></li>
+<li><a href="#_summary_3">Summary</a></li>
+</ul>
+</li>
+<li><a href="#More_Listeners">Bigger TNT Explosions</a>
+<ul class="sectlevel2">
+<li><a href="#_create_the_plugin_4">Create the plugin</a></li>
+<li><a href="#_create_the_listener">Create the Listener</a></li>
+<li><a href="#_add_event_handlers_4">Add event handlers</a></li>
+<li><a href="#_install_and_verify_3">Install and verify</a></li>
+<li><a href="#_summary_4">Summary</a></li>
+</ul>
+</li>
+<li><a href="#Flaming_Pigs">Flaming Pigs</a>
+<ul class="sectlevel2">
+<li><a href="#_create_the_plugin_5">Create the plugin</a></li>
+<li><a href="#_register_the_command">Register the command</a></li>
+<li><a href="#_add_command_functionality">Add command functionality</a></li>
+<li><a href="#_install_and_verify_4">Install and verify</a></li>
+<li><a href="#_summary_5">Summary</a></li>
+</ul>
+</li>
+<li><a href="#Throw_Egg">Throw Egg</a>
+<ul class="sectlevel2">
+<li><a href="#_create_the_plugin_6">Create the plugin</a></li>
+<li><a href="#_register_the_command_2">Register the command</a></li>
+<li><a href="#_add_command_functionality_2">Add command functionality</a></li>
+<li><a href="#_register_and_create_the_listener_4">Register and create the Listener</a></li>
+<li><a href="#_add_event_handlers_5">Add event handlers</a></li>
+<li><a href="#_install_and_verify_5">Install and verify</a></li>
+<li><a href="#_summary_6">Summary</a></li>
+</ul>
+</li>
+<li><a href="#Sponge">Sponge Water</a>
+<ul class="sectlevel2">
+<li><a href="#_create_the_plugin_7">Create the plugin</a></li>
+<li><a href="#_register_and_create_the_listener_5">Register and create the Listener</a></li>
+<li><a href="#_add_event_handlers_6">Add event handlers</a></li>
+<li><a href="#_install_and_verify_6">Install and verify</a></li>
+<li><a href="#_summary_7">Summary</a></li>
+</ul>
+</li>
+<li><a href="#Tower_Builder">Tower Builder</a>
+<ul class="sectlevel2">
+<li><a href="#_create_the_plugin_8">Create the plugin</a></li>
+<li><a href="#_register_the_command_3">Register the command</a></li>
+<li><a href="#_add_command_functionality_3">Add command functionality</a></li>
+<li><a href="#_install_and_verify_7">Install and verify</a></li>
+<li><a href="#_summary_8">Summary</a></li>
+</ul>
+</li>
+<li><a href="#Fun_Plugins">Recipes and Enchantments</a>
+<ul class="sectlevel2">
+<li><a href="#_crafting_recipe">Crafting Recipe</a></li>
+<li><a href="#_smelting_recipe">Smelting Recipe</a></li>
+<li><a href="#_higher_enchantments">Higher Enchantments</a></li>
+<li><a href="#_summary_9">Summary</a></li>
+</ul>
+</li>
+<li><a href="#Explosions">Explosions and Rocket Launchers</a>
+<ul class="sectlevel2">
+<li><a href="#_tnt_magnet">TNT Magnet</a></li>
+<li><a href="#_rocket_launcher">Rocket Launcher</a></li>
+<li><a href="#_summary_10">Summary</a></li>
+</ul>
+</li>
+<li><a href="#Warp_Board">Warp Board</a>
+<ul class="sectlevel2">
+<li><a href="#_warp_board">Warp Board</a></li>
+<li><a href="#_registering_the_command">Registering the command</a></li>
+<li><a href="#_adding_command_functionality">Adding command functionality</a></li>
+<li><a href="#_create_the_listener_and_add_event_handlers">Create the Listener and add event handlers</a></li>
+<li><a href="#_verify_that_it_works_2">Verify that it works</a></li>
+<li><a href="#_summary_11">Summary</a></li>
+</ul>
+</li>
+<li><a href="#Managing_your_server_with_CraftBukkit">Managing your CraftBukkit server</a>
+<ul class="sectlevel2">
+<li><a href="#_bukkit_api">Bukkit API</a></li>
+<li><a href="#Which_CraftBukkit_Build_to_use">Which CraftBukkit build to use ?</a></li>
+<li><a href="#Running_CraftBukkit_Server">Run a CraftBukkit server</a></li>
+<li><a href="#Manage_CraftBukkit_Server">Manage a CraftBukkit Server</a></li>
+<li><a href="#Bukkit_documentation">Bukkit documentation</a></li>
+<li><a href="#_summary_12">Summary</a></li>
+</ul>
+</li>
+<li><a href="#Tools_for_building_plugins">Tools for Building Plugins</a>
+<ul class="sectlevel2">
+<li><a href="#Maven">Maven</a></li>
+<li><a href="#Tools_for_Authoring_Plugins">Tools for Authoring Plugins</a>
+<ul class="sectlevel3">
+<li><a href="#_netbeans_2">NetBeans</a></li>
+</ul>
+</li>
+<li><a href="#_summary_13">Summary</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+</div>
 <div class="sect1">
 <h2 id="New_Chapter_1">Your First Plugin</h2>
 <div class="sectionbody">
@@ -5252,7 +5403,7 @@ Option                                  Description
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2015-09-19 16:56:34 PDT
+Last updated 2015-09-19 17:06:27 PDT
 </div>
 </div>
 </body>
