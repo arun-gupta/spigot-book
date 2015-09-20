@@ -10,20 +10,20 @@ An individual player uses a __client__, think of it as a program downloaded on y
 
 Its very common to have a server run with multiple plugins. There are almost an infinite number of plugins someone could do to make Minecraft a more amusing game to play. There is no official way to create these plugins, but there are several third-party vendors that provide that capability; Bukkit is one such way, and the most popular way. The ability to write plugins and alter the gameplay gives players more control over the game, and makes them more excited.
 
-=== Bukkit introduction
+=== Spigot introduction
 
-image:images/bukkit-logo.png[width="300", height="45"] Bukkit is a free, open-source, software project that provides the means to extend Minecraft multiplayer servers. It is not the official way to add to a server, nor is it supported by Mojang yet. However, it is one of the most popular ways to build server-side plugins, which are plugins that only work on servers. 
+image:images/spigot-logo.png[] Spigot is a free, open-source, software project that provides the means to extend Minecraft multiplayer servers. It is not the official way to add mods to a server, nor is it supported by Mojang yet. However, it is one of the most popular ways to build server-side plugins, which are plugins that only work on servers. 
 
-Bukkit does NOT make mods. It makes plugins, which, contrary to popular belief, are not the same as mods. There is not much difference between plugins and mods, but some notable differences do exist.
+Spigot does NOT make mods. It makes plugins, which, contrary to popular belief, are not the same as mods.
 
 .What is the difference between mods and plugins?
 ****
 Mods involve __modifying__ the source code of Minecraft to do something or add additional functionality. Plugins are extra software that __plug__ into an application, instead of modifying the source code. Mods generally provide a framework that recognize plugins built using that framework. This makes mod free-standing, while plugins are generally built on the framework provided by mods.
 
-For example, CraftBukkit is a modded Minecraft server that recognizes plugins built using the Bukkit API.
+For example, Spigot is a modded Minecraft server that recognizes plugins built using the Bukkit API.
 ****
 
-The plugins you can make with Bukkit don't actually modify your server. Instead, they just add on to it. For example, a mod would change the size of a TNT explosion by modifying the source code of Minecraft. In order to remove that modification and go back to the original game play, the source code needs to be modified back to the original one. A plugin can also make a bigger TNT explosion. They are called plugins because that is how you install them; you ``plug them in'' to your server.
+The plugins you can make with Spigot don't actually modify your server. Instead, they just add on to it. For example, a mod would change the size of a TNT explosion by modifying the source code of Minecraft. In order to remove that modification and go back to the original game play, the source code needs to be modified back to the original one. A plugin can also make a bigger TNT explosion. They are called plugins because that is how you install them; you ``plug them in'' to your server.
 
 There are so many currently existing plugins for Bukkit (over 10,000) that it can do pretty much anything! You can find all of these plugins at http://plugins.bukkit.org/. This book will teach you how to build plugins like that.
 
@@ -32,7 +32,7 @@ There are so many currently existing plugins for Bukkit (over 10,000) that it ca
 In order to create plugins, we need to use a few tools. 
 
 . Java Development Kit
-. CraftBukkit
+. Spigot
 . Bukkit API
 . NetBeans
 
@@ -52,45 +52,60 @@ Download JDK from http://www.oracle.com/technetwork/java/javase/downloads/index.
 If you are not sure that JDK is already installed on your machine then follow the installation instructions listed above. This will update to the latest version anyway and is the recommended version for this book. Either way, you'll need at least JDK 6.
 ====
 
-==== CraftBukkit
+==== Spigot
 
-The __vanilla__, or un-modded server as downloaded from http://minecraft.net does not understand the plugins built using Bukkit. CraftBukkit is a modified version of the vanilla server that does understand Bukkit plugins. It is available for download at https://dl.bukkit.org/downloads/craftbukkit/ at no cost at all. That is one of the many reasons that modders like to use it to make plugins for their servers.
+The __vanilla__, or un-modded server as downloaded from http://minecraft.net does not understand the plugins built using Bukkit. Spigot is a modified version of the vanilla server that does understand Bukkit plugins. It is available for download at https://hub.spigotmc.org/jenkins/job/BuildTools/lastSuccessfulBuild/artifact/target/BuildTools.jar at no cost at all. That is one of the many reasons that modders like to use it to make plugins for their servers.
 
-.Difference between Bukkit and CraftBukkit
+.Difference between Bukkit, Spigot, and CraftBukkit
 ****
-Sometimes, people get the terms ``Bukkit'' and ``CraftBukkit'' mixed up. They are not the same thing. Bukkit is the API used by developers to make plugins. CraftBukkit is the modified server that can understand plugins made by the Bukkit API.
+Bukkit is the API used by developers to make plugins.
+CraftBukkit is the modded server that understands Bukkit API.
+Spigot API: https://github.com/arun-gupta/spigot-book/issues/1
+Spigot is an improved CraftBukkit that is much faster and more configurable.
 ****
 
-To use the plugins you will make later on, you will need a server to put them on. https://dl.bukkit.org/downloads/craftbukkit/ contains a list of all the server downloads available. There are a lot of downloads on this page, and it may be confusing to look through them all. Instead, look on the right of the page.
+To use the plugins you will make later on, you will need a server to put them on. This can be done by downloading `BuildTools.jar` and installing it. Detailed instructions to install Spigot are available at https://www.spigotmc.org/wiki/buildtools/#running-buildtools.
 
-CraftBukkit is available in three different builds:
+NOTE: This book will provide all the instructions assuming you are using a Mac OS X.
 
-- Recommended
-- Beta
-- Development
+. Open a Terminal using Spotlight (Press `Cmd` and `Space` keys together and type "`terminal`" and hit Enter)
+. Create a new directory '`spigot`' by typing the command `mkdir spigot`.
+. Change to this directory by giving the command `cd spigot`.
+. Download `BuildTools.jar` by giving the command `curl -o BuildTools.jar https://hub.spigotmc.org/jenkins/job/BuildTools/lastSuccessfulBuild/artifact/target/BuildTools.jar`
+. Setup properties to generate the Spigot project by giving the command `export MAVEN_OPTS="-Xmx2G"`.
+. Generate Spigot project by giving the command `java -Xmx2G -jar BuildTools.jar`. This will show the output:
++
+[source, text]
+----
+spigot> java -Xmx2G -jar ~/Downloads/BuildTools.jar
+Loading BuildTools version: git-BuildTools-1847da7-45 (#45)
+arun-gupta
+arun.gupta@gmail.com
+Starting clone of https://hub.spigotmc.org/stash/scm/spigot/bukkit.git to Bukkit
+Cloned git repository https://hub.spigotmc.org/stash/scm/spigot/bukkit.git to /Users/arungupta/tools/spigot/Bukkit. Current HEAD: 31d4f76a1510fa4810a917af05eeceec03d4b98a
 
-These builds differ in terms of what version of Minecraft is supported and what items, blocks, and entities can be modded. For example, the support at the time of this writing is shown in <<Bukkit_Builds>>. The versions may have changed since then.
+. . .
 
-[[Bukkit_Builds]]
-.Bukkit Builds
-[width="50%"]
-|====
-| Build | Version
-
-| Recommended | 1.6.4-R2.0
-| Beta | 1.7.9-R0.2
-| Development | 1.7.10-R0.1
-|====
-
-These builds explained in detail at <<Which_CraftBukkit_Build_to_use>>. This book will use the Beta build, which is version 1.7.9-R0.2. This version is for Minecraft version 1.7.9, and is the second of those builds.
-
-Download `Beta' CraftBukkit build from https://dl.bukkit.org/downloads/craftbukkit/. No separate installation is required for CraftBukkit. Create a new directory ``craftbukkit'' in `C:\` on a Windows machine or `/Users/<name>` on a Mac where <name> is your user name on the machine. Copy this JAR file there. Lets call this directory as our __craftbukkit directory__. This is required because starting the server later will generate several files and directories and this will keep all of them contained in a single directory. 
+Success! Everything compiled successfully. Copying final .jar files now.
+Copying craftbukkit-1.8.8-R0.1-SNAPSHOT.jar to /Users/arungupta/tools/spigot/.
+  - Saved as craftbukkit-1.8.8.jar
+Copying spigot-1.8.8-R0.1-SNAPSHOT.jar to /Users/arungupta/tools/spigot/.
+  - Saved as spigot-1.8.8.jar
+----
++
+This generates the following directories:
++
+[source, text]
+----
+BuildData           Bukkit			Spigot			    craftbukkit-1.8.8.jar	work
+BuildTools.log.txt	CraftBukkit		apache-maven-3.2.5	spigot-1.8.8.jar
+----
 
 ==== NetBeans
 
-image:images/netbeans-logo.png[height="82", width="223"] A Bukkit plugin is a JAR file and requires a specific directory structure with Java and configuration files in it. These files have a lot of similarities but also contain some basic differences like plugin name, different commands they offer, and of course the functionality itself. These directories and files can be manually created every time by going into Explorer for Windows or Finder for Mac. That does help you understand the directory layout better, and might be interesting for the first couple of times. However, we plan to write a lot of plugins in this book. So we need to think of an efficient way to create these directories and files.
+image:images/netbeans-logo.png[height="82", width="223"] A Spigot plugin is a JAR file and requires a specific directory structure with Java and other files in it. These files have a lot of similarities but also contain some basic differences like plugin name, different commands they offer, and of course the functionality itself. These directories and files can be manually created every time by going into Explorer for Windows or Finder for Mac. That does help you understand the directory layout better, and might be interesting for the first couple of times. However, we plan to write quite a few plugins in this book. So we need to think of an efficient way to create these directories and files.
 
-To create the plugin, we will be using a recipe to generate our __project__. The project contains the entire source code, plus configuration files, to make the plugin. This recipe allows us to create a project to start with. We will call this recipe as the __Bukkit Recipe__ throughout this book. It simplifies the task of making plugins so you can focus on the more important and fun stuff, such as bigger TNT explosions.
+To create the plugin, we will be using a recipe to generate our __project__. The project contains the entire source code and other files to make the plugin. This recipe allows us to create a project to start with. We will call this recipe as the __Spigot Recipe__ throughout this book. It simplifies the task of making plugins so you can focus on the more important and fun stuff, such as bigger TNT explosions.
 
 So, how do you use this recipe?
 
@@ -100,7 +115,7 @@ The two important parts of an IDE are the file editor and the packager. The file
 
 NetBeans is a free tool that runs on Macintosh, Windows, Linux, and other operating systems that has JDK installed already. This book will use it for creating plugins.
 
-Download NetBeans from https://netbeans.org/downloads/. Make sure to click on ``Download'' button in ``Java SE'' column as shown in <<NetBeans_download>>.
+Download NetBeans from https://netbeans.org/downloads/. Make sure to click on ``Download`' button in '`Java SE`' column as shown in <<NetBeans_download>>.
 
 [[NetBeans_download]]
 .NetBeans download
@@ -112,39 +127,60 @@ If you do have a prior version of NetBeans, its recommended to install this new 
 
 === Start Minecraft server
 
-CraftBukkit JAR file and JDK are required to start Minecraft server.
+Spigot JAR file (generated earlier) and JDK are required to start the modded Minecraft server.
 
-Navigate to our craftbukkit directory in a Command Prompt on a Windows machine or Terminal in Macintosh. Type in `java -jar craftbukkit-1.7.9-R0.2.jar`.
-
+. Go to '`spigot`' directory in a Command Prompt on a Windows machine or Terminal in Macintosh.
+. Create a new directory '`server`' in this directory. This is required because starting the server later will generate several files and directories and this will keep all of them contained in a single directory. 
+. Type in `java -jar ../spigot-1.8.8.jar`.
++
 `java -jar <file name>` is the generic command for starting any JAR file. In this case, we are starting the server jar file, which starts the Minecraft server.
-
++
 [TIP]
 .java command not found
 ====
 If running the server shows an error as `java: Command not found' or `java: No such file or directory' then you need to make sure the tools bundled with JDK can be invoked from Command Prompt or Terminal. Follow the instructions from http://docs.oracle.com/javase/tutorial/essential/environment/paths.html to set up PATH envinronment variable.
 ====
++
+. Running this command will show the output:
++
+[source, text]
+----
+Loading libraries, please wait...
+[21:11:27 INFO]: Starting minecraft server version 1.8.8
+[21:11:27 INFO]: Loading properties
+[21:11:27 WARN]: server.properties does not exist
+[21:11:27 INFO]: Generating new properties file
+[21:11:27 WARN]: Failed to load eula.txt
+[21:11:27 INFO]: You need to agree to the EULA in order to run the server. Go to eula.txt for more info.
+[21:11:27 INFO]: Stopping server
+----
++
+. Edit `eula.txt` by giving the command `vi eula.txt` and change the line `eula=false` to `eula=true`.
+. Give the command `java -jar ../spigot-1.8.8.jar` again in a Terminal.
 
-Running this command will display a lot of messages on your command promt or terminal. It may look confusing at first but there is relevant for each and every line. However two messages in the output are important to understand, and are shown in <<Start_Server_Output>>.
+Running this command will display a lot of messages in Terminal. It may look confusing at first but there is relevant for each and every line. However two messages in the output are important to understand, and are shown in <<Start_Server_Output>>.
 
 [[Start_Server_Output]]
 .Output from Minecraft server start
 ====
 [source, text]
 ----
-[21:29:37 INFO]: Starting minecraft server version 1.7.9 <1>
+[21:15:37 INFO]: Starting minecraft server version 1.8.8 <1>
 ...
-[21:29:37 INFO]: Default game type: SURVIVAL <2>
+[21:15:37 INFO]: Default game type: SURVIVAL <2>
 ----
 ====
 
-<1> Shows that Minecraft server version is 1.7.9, which is the right version.
+<1> Shows that Minecraft server version is 1.8.8. Note the exact version may differ if you have a more recent version of the JAR file.
 <2> Shows the default game mode is Survival. It is much easier to test these plugins in Creative, but for now, you can stay in Survival.
 
 Starting a server for the first time in a new directory will create some new directories and files. These are all important to the server, but the only one that is important to us is the `plugins` directory.
 
-Another important part about servers is joining them. Without being able to log onto a server, you cannot test your plugins. To log onto the server: 
+=== Join the Server
 
-. Click on the ``Multiplayer'' tab on the Minecraft home screen
+Now that the server has started, lets see how we can join this server. Without being able to log onto a server, you cannot test your plugins. To log onto the server: 
+
+. Click on the ``Multiplayer'' tab in the Minecraft laucnher
 . Click on ``Direct Connect'' 
 . Enter ``localhost'' in the ``Server Adress'' box 
 . Click ``Join Server''
