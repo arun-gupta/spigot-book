@@ -439,21 +439,21 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </li>
 <li><a href="#_start_minecraft_server">Start Minecraft server</a></li>
 <li><a href="#_join_the_server">Join the Server</a></li>
-<li><a href="#_create_the_plugin">Create the plugin</a>
+</ul>
+</li>
+<li><a href="#_create_a_plugin">Create a Plugin</a>
 <ul class="sectlevel3">
 <li><a href="#_generate_project">Generate project</a></li>
 <li><a href="#_register_and_create_the_listener">Register and create the listener</a></li>
 <li><a href="#_add_event_handlers">Add event handlers</a></li>
 <li><a href="#_build_and_install_the_plugin">Build and install the plugin</a></li>
 <li><a href="#_verify_that_it_works">Verify that it works</a></li>
-</ul>
-</li>
 <li><a href="#_summary">Summary</a></li>
 </ul>
 </li>
 <li><a href="#Block-Money-Chapter">Creating In-game Money</a>
 <ul class="sectlevel2">
-<li><a href="#_create_the_plugin_2">Create the plugin</a></li>
+<li><a href="#_create_the_plugin">Create the plugin</a></li>
 <li><a href="#_register_and_create_the_listener_2">Register and create the Listener</a></li>
 <li><a href="#_add_event_handlers_2">Add event handlers</a></li>
 <li><a href="#_install_and_verify">Install and verify</a></li>
@@ -462,7 +462,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </li>
 <li><a href="#Zombies">Zombies Dropping Bones</a>
 <ul class="sectlevel2">
-<li><a href="#_create_the_plugin_3">Create the plugin</a></li>
+<li><a href="#_create_the_plugin_2">Create the plugin</a></li>
 <li><a href="#_register_and_create_the_listener_3">Register and create the Listener</a></li>
 <li><a href="#_add_event_handlers_3">Add event handlers</a></li>
 <li><a href="#_install_and_verify_2">Install and verify</a></li>
@@ -471,7 +471,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </li>
 <li><a href="#More_Listeners">Bigger TNT Explosions</a>
 <ul class="sectlevel2">
-<li><a href="#_create_the_plugin_4">Create the plugin</a></li>
+<li><a href="#_create_the_plugin_3">Create the plugin</a></li>
 <li><a href="#_create_the_listener">Create the Listener</a></li>
 <li><a href="#_add_event_handlers_4">Add event handlers</a></li>
 <li><a href="#_install_and_verify_3">Install and verify</a></li>
@@ -480,7 +480,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </li>
 <li><a href="#Flaming_Pigs">Flaming Pigs</a>
 <ul class="sectlevel2">
-<li><a href="#_create_the_plugin_5">Create the plugin</a></li>
+<li><a href="#_create_the_plugin_4">Create the plugin</a></li>
 <li><a href="#_register_the_command">Register the command</a></li>
 <li><a href="#_add_command_functionality">Add command functionality</a></li>
 <li><a href="#_install_and_verify_4">Install and verify</a></li>
@@ -489,7 +489,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </li>
 <li><a href="#Throw_Egg">Throw Egg</a>
 <ul class="sectlevel2">
-<li><a href="#_create_the_plugin_6">Create the plugin</a></li>
+<li><a href="#_create_the_plugin_5">Create the plugin</a></li>
 <li><a href="#_register_the_command_2">Register the command</a></li>
 <li><a href="#_add_command_functionality_2">Add command functionality</a></li>
 <li><a href="#_register_and_create_the_listener_4">Register and create the Listener</a></li>
@@ -500,7 +500,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </li>
 <li><a href="#Sponge">Sponge Water</a>
 <ul class="sectlevel2">
-<li><a href="#_create_the_plugin_7">Create the plugin</a></li>
+<li><a href="#_create_the_plugin_6">Create the plugin</a></li>
 <li><a href="#_register_and_create_the_listener_5">Register and create the Listener</a></li>
 <li><a href="#_add_event_handlers_6">Add event handlers</a></li>
 <li><a href="#_install_and_verify_6">Install and verify</a></li>
@@ -509,7 +509,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </li>
 <li><a href="#Tower_Builder">Tower Builder</a>
 <ul class="sectlevel2">
-<li><a href="#_create_the_plugin_8">Create the plugin</a></li>
+<li><a href="#_create_the_plugin_7">Create the plugin</a></li>
 <li><a href="#_register_the_command_3">Register the command</a></li>
 <li><a href="#_add_command_functionality_3">Add command functionality</a></li>
 <li><a href="#_install_and_verify_7">Install and verify</a></li>
@@ -622,9 +622,6 @@ blocks. The game also contains <em>entities</em>, which are dynamic moving objec
 <p>Spigot</p>
 </li>
 <li>
-<p>Bukkit API</p>
-</li>
-<li>
 <p>NetBeans</p>
 </li>
 </ol>
@@ -667,11 +664,21 @@ blocks. The game also contains <em>entities</em>, which are dynamic moving objec
 <div class="sidebarblock">
 <div class="content">
 <div class="title">Difference between Bukkit, Spigot, and CraftBukkit</div>
-<div class="paragraph">
-<p>Bukkit is the API used by developers to make plugins.
-CraftBukkit is the modded server that understands Bukkit API.
-Spigot API: <a href="https://github.com/arun-gupta/spigot-book/issues/1" class="bare">https://github.com/arun-gupta/spigot-book/issues/1</a>
-Spigot is an improved CraftBukkit that is much faster and more configurable.</p>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Bukkit is the API used by developers to make plugins.</p>
+</li>
+<li>
+<p>CraftBukkit is the modded server that understands Bukkit API.</p>
+</li>
+<li>
+<p>Spigot API: <a href="https://github.com/arun-gupta/spigot-book/issues/1" class="bare">https://github.com/arun-gupta/spigot-book/issues/1</a></p>
+</li>
+<li>
+<p>Spigot is an improved CraftBukkit that is much faster and more configurable.</p>
+</li>
+</ol>
 </div>
 </div>
 </div>
@@ -871,28 +878,31 @@ BuildTools.log.txt	CraftBukkit		apache-maven-3.2.5	spigot-1.8.8.jar</code></pre>
 <div class="olist arabic">
 <ol class="arabic">
 <li>
-<p>Click on the ``Multiplayer'' tab in the Minecraft laucnher</p>
+<p>Click on the &#8216;Multiplayer&#8217; tab in the Minecraft laucnher</p>
 </li>
 <li>
-<p>Click on ``Direct Connect''</p>
+<p>Click on &#8216;Direct Connect&#8217;</p>
 </li>
 <li>
-<p>Enter <code>localhost'' in the </code>Server Adress'' box</p>
+<p>Enter &#8216;localhost&#8217; in the &#8216;Server Adress&#8217; box</p>
 </li>
 <li>
-<p>Click ``Join Server''</p>
+<p>Click &#8216;Join Server&#8217;</p>
 </li>
 </ol>
 </div>
 <div class="paragraph">
-<p>``localhost'' is a special name reserved for everybody&#8217;s local machine. What you are doing is telling Minecraft to join the server running on your computer. Plugins will be installed on this server later.</p>
+<p>&#8216;localhost&#8217; is a special name reserved for everybody&#8217;s local machine. What you are doing is telling Minecraft to join the server running on your computer. Plugins will be installed on this server later.</p>
 </div>
 <div class="paragraph">
 <p>Lets create our plugin and see how this directory is used.</p>
 </div>
 </div>
-<div class="sect2">
-<h3 id="_create_the_plugin">Create the plugin</h3>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_create_a_plugin">Create a Plugin</h2>
+<div class="sectionbody">
 <div class="paragraph">
 <p>This section will walk you through the steps of creating a plugin. Don&#8217;t panic if they seem unfamiliar at first. We&#8217;ll be using steps multiple times through out the book and you&#8217;ll be an expert at them pretty quickly.</p>
 </div>
@@ -905,7 +915,7 @@ BuildTools.log.txt	CraftBukkit		apache-maven-3.2.5	spigot-1.8.8.jar</code></pre>
 <p>Generate a project as a placeholder to contain different files</p>
 </li>
 <li>
-<p>Author Java and configuration files, create new images, etc. in the project</p>
+<p>Edit Java and other files, create new images, etc. in the project</p>
 </li>
 <li>
 <p>Package the project in a JAR file</p>
@@ -1608,7 +1618,6 @@ BUILD SUCCESS <b class="conum">(2)</b>
 <p>The list here shows that only ``playerentryexit'' plugin is installed. If you have moved ahead, and installed other plugins, then those will be shown here as well.</p>
 </div>
 </div>
-</div>
 <div class="sect2">
 <h3 id="_summary">Summary</h3>
 <div class="paragraph">
@@ -1636,7 +1645,7 @@ BUILD SUCCESS <b class="conum">(2)</b>
 <p>In this chapter, we will be using the Bukkit Recipe introduced in last chapter to create a new plugin. We will then use a Listener to reward a player with in-game money whenever he/she breaks or places a block.</p>
 </div>
 <div class="sect2">
-<h3 id="_create_the_plugin_2">Create the plugin</h3>
+<h3 id="_create_the_plugin">Create the plugin</h3>
 <div class="paragraph">
 <p>Again, we will be using the Bukkit Recipe to create the plugin. To reiterate the steps for creating a plugin are:</p>
 </div>
@@ -1940,7 +1949,7 @@ BUILD SUCCESS
 <p>Normally, in Minecraft, zombies are the most common hostile mob, and they are also probably the most complicated. For example, they can wear armor and hold items/blocks. They also drop a lot of items. Normally, they drop rotten flesh, and sometimes they drop other items like carrots and potatoes. In this chapter, we will make a new plugin that makes them drop bones as well.</p>
 </div>
 <div class="sect2">
-<h3 id="_create_the_plugin_3">Create the plugin</h3>
+<h3 id="_create_the_plugin_2">Create the plugin</h3>
 <div class="paragraph">
 <p>As always, our first step is to create the plugin using Bukkit Recipe. The exact steps to use the recipe are explained in earlier chapters. The information that you enter in the plugin creation will be very similar to <a href="#PlayerEntryExit_Plugin_Details_Image">PlayerEntryExit plugin details</a>. <a href="#ZombieBones_plugin_values">BlockMoney plugin updated values</a> shows the values that needs to be updated.</p>
 </div>
@@ -2264,7 +2273,7 @@ Sometimes, the zombie will drop ``ghost items'', which are items that cannot be 
 <p>As in previous chapters, we&#8217;ll be using Listeners and Event Handlers to achieve this functionality.</p>
 </div>
 <div class="sect2">
-<h3 id="_create_the_plugin_4">Create the plugin</h3>
+<h3 id="_create_the_plugin_3">Create the plugin</h3>
 <div class="paragraph">
 <p>After making a few plugins, you should now be an expert in how to get started with creating a sample plugin. So, as always, we start with the Bukkit Recipe. The information that you enter in the plugin creation, once again, will be very similar to <a href="#PlayerEntryExit_Plugin_Details_Image">PlayerEntryExit plugin details</a>. <a href="#BiggerTNT_plugin_values">BiggerTNT plugin updated values</a> shows the values that needs to be updated.</p>
 </div>
@@ -2447,7 +2456,7 @@ BUILD SUCCESS
 <p>In Minecraft, pigs aren&#8217;t normally on fire. The only way to ignite them is to push them into a fire block or into lava. This plugin will add a command that lets you spawn whatever number of pigs you want and also sets them on fire. It isn&#8217;t really very useful, just funny to see a bunch of pigs on fire. And isnt&#8217;t that what the entire game of Minecraft is about ?</p>
 </div>
 <div class="sect2">
-<h3 id="_create_the_plugin_5">Create the plugin</h3>
+<h3 id="_create_the_plugin_4">Create the plugin</h3>
 <div class="paragraph">
 <p>If you&#8217;ve followed the previous chapters, you exactly know how to get started. Yep, we&#8217;ll use Bukkit Recipe to create this plugin. The information for plugin creation is quite similar to <a href="#PlayerEntryExit_Plugin_Details_Image">PlayerEntryExit plugin details</a>. <a href="#FlamingPigs_plugin_values">FlamingPigs plugin updated values</a> shows the values that needs to be updated.</p>
 </div>
@@ -2881,7 +2890,7 @@ BUILD SUCCESS
 <p>When you right-click with an egg item, it gets thrown, and on landing, it has a 12.5% chance of spawning a baby chicken. This plugin will add a command that controls what spawns when the egg lands. So instead of chickens, it could spawn zombies, pigs, or whatever you want it to. You can also configure how many of that mob will be spawned.</p>
 </div>
 <div class="sect2">
-<h3 id="_create_the_plugin_6">Create the plugin</h3>
+<h3 id="_create_the_plugin_5">Create the plugin</h3>
 <div class="paragraph">
 <p>First of all, like all other plugins, use the Bukkit Recipe to create a new plugin. The information for plugin creation is quite similar to <a href="#PlayerEntryExit_Plugin_Details_Image">PlayerEntryExit plugin details</a>. <a href="#ThrowEgg_plugin_values">ThrowEgg plugin updated values</a> shows the values that needs to be updated.</p>
 </div>
@@ -3228,7 +3237,7 @@ public void hatchEntity(CreatureSpawnEvent event) { <b class="conum">(1)</b>
 <p>In the very early versions of Minecraft, sponges actually did absorb water. The sponges made an area of air around them to ward away water. This functionality was removed in later versions, so a lot of work was required if a player wanted to remove water. The only ways they could achieve that were very hard to do and usually did not work. This plugin will make sponges do what they used to do - absorb water.</p>
 </div>
 <div class="sect2">
-<h3 id="_create_the_plugin_7">Create the plugin</h3>
+<h3 id="_create_the_plugin_6">Create the plugin</h3>
 <div class="paragraph">
 <p>Like all other plugins, this one starts with the Bukkit Recipe. The information for plugin creation is quite similar to <a href="#PlayerEntryExit_Plugin_Details_Image">PlayerEntryExit plugin details</a>. <a href="#SpongeWater_plugin_values">ThrowEgg plugin updated values</a> shows the values that needs to be updated.</p>
 </div>
@@ -3414,7 +3423,7 @@ public void absorbWater(BlockPlaceEvent event) { <b class="conum">(1)</b>
 <p>Towers like the ones created by this plugin can be created normally, but if you want to make really high towers, it could take a while. You would have to place eight blocks for each layer of the tower, so for a 100 block tower, you would have to place 800 blocks! That would be very time-consuming and not very fun either. This plugin lets you make towers with just one command, so you can focus on other fun aspects of Minecraft instead of spending your time building towers.</p>
 </div>
 <div class="sect2">
-<h3 id="_create_the_plugin_8">Create the plugin</h3>
+<h3 id="_create_the_plugin_7">Create the plugin</h3>
 <div class="paragraph">
 <p>First of all, like all other plugins, use the Bukkit Recipe to create a new plugin. The information for plugin creation is quite similar to <a href="#PlayerEntryExit_Plugin_Details_Image">PlayerEntryExit plugin details</a>. <a href="#SpongeWater_plugin_values">ThrowEgg plugin updated values</a> shows the values that needs to be updated.</p>
 </div>
@@ -5450,7 +5459,7 @@ Option                                  Description
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2015-09-19 17:11:20 PDT
+Last updated 2015-09-19 21:56:42 PDT
 </div>
 </div>
 </body>
